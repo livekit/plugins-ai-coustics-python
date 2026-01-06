@@ -5,9 +5,14 @@ requires = ["setuptools>=61.0", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "audio-filter-uniffi"
-version = "0.1.0"
+name = "livekit-plugins-ai-coustics"
+version = "0.1.1"
+description = "LiveKit AI Coustics noise filtering plugin"
+readme = "README.md"
 requires-python = ">=3.9"
+dependencies = ["livekit>=0.21.3"]
+keywords = ["webrtc", "realtime", "audio", "livekit", "ai-coustics"]
+license = { text = "SEE LICENSE IN https://livekit.io/legal/terms-of-service" }
 
 [tool.setuptools]
 package-dir = { "" = "src" }
@@ -16,12 +21,11 @@ package-dir = { "" = "src" }
 where = ["src"]
 
 [tool.setuptools.package-data]
-audio_filter_uniffi = ["*.so", "*.dylib", "*.dll"]
+"livekit.plugins.ai_coustics._ffi" = ["*.so", "*.dylib", "*.dll"]
 
 [tool.cibuildwheel]
 build = "cp39-*"
 skip = "*-musllinux_*"
-before-build = "python download_lib.py --skip"
 repair-wheel-command = ""
 
 # Image selection
