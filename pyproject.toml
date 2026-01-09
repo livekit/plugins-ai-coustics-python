@@ -26,7 +26,6 @@ where = ["src"]
 [tool.cibuildwheel]
 build = "cp39-*"
 skip = "*-musllinux_*"
-repair-wheel-command = ""
 
 # Image selection
 manylinux-x86_64-image = "manylinux_2_28"
@@ -34,3 +33,10 @@ manylinux-i686-image = "manylinux_2_28"
 manylinux-aarch64-image = "manylinux_2_28"
 manylinux-ppc64le-image = "manylinux_2_28"
 manylinux-s390x-image = "manylinux_2_28"
+
+[tool.cibuildwheel.macos]
+repair-wheel-command = ""
+
+[tool.cibuildwheel.linux]
+# Attempt to repair, otherwise copy
+repair-wheel-command = "auditwheel repair --allow-pure-python-wheel --exclude libaudiofilter* -w {dest_dir} {wheel}"
