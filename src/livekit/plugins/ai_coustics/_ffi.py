@@ -46,14 +46,14 @@ class _UniffiRustBuffer(ctypes.Structure):
 
     @staticmethod
     def alloc(size):
-        return _uniffi_rust_call(_UniffiLib.ffi_audio_filter_uniffi_rustbuffer_alloc, size)
+        return _uniffi_rust_call(_UniffiLib.ffi_plugins_ai_coustics_uniffi_rustbuffer_alloc, size)
 
     @staticmethod
     def reserve(rbuf, additional):
-        return _uniffi_rust_call(_UniffiLib.ffi_audio_filter_uniffi_rustbuffer_reserve, rbuf, additional)
+        return _uniffi_rust_call(_UniffiLib.ffi_plugins_ai_coustics_uniffi_rustbuffer_reserve, rbuf, additional)
 
     def free(self):
-        return _uniffi_rust_call(_UniffiLib.ffi_audio_filter_uniffi_rustbuffer_free, self)
+        return _uniffi_rust_call(_UniffiLib.ffi_plugins_ai_coustics_uniffi_rustbuffer_free, self)
 
     def __str__(self):
         return "_UniffiRustBuffer(capacity={}, len={}, data={})".format(
@@ -464,7 +464,7 @@ def _uniffi_load_indirect():
         # Anything else must be an ELF platform - Linux, *BSD, Solaris/illumos
         libname = "lib{}.so"
 
-    libname = libname.format("audio_filter_uniffi")
+    libname = libname.format("plugins_ai_coustics_uniffi")
     path = os.path.join(os.path.dirname(__file__), libname)
     lib = ctypes.cdll.LoadLibrary(path)
     return lib
@@ -473,49 +473,49 @@ def _uniffi_check_contract_api_version(lib):
     # Get the bindings contract version from our ComponentInterface
     bindings_contract_version = 30
     # Get the scaffolding contract version by calling the into the dylib
-    scaffolding_contract_version = lib.ffi_audio_filter_uniffi_uniffi_contract_version()
+    scaffolding_contract_version = lib.ffi_plugins_ai_coustics_uniffi_uniffi_contract_version()
     if bindings_contract_version != scaffolding_contract_version:
         raise InternalError("UniFFI contract version mismatch: try cleaning and rebuilding your project")
 
 def _uniffi_check_api_checksums(lib):
-    if lib.uniffi_audio_filter_uniffi_checksum_constructor_audiofilter_new() != 9588:
+    if lib.uniffi_plugins_ai_coustics_uniffi_checksum_constructor_enhancer_new() != 685:
         raise InternalError("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
-    if lib.uniffi_audio_filter_uniffi_checksum_method_audiofilter_process() != 39337:
+    if lib.uniffi_plugins_ai_coustics_uniffi_checksum_method_enhancer_process() != 9700:
         raise InternalError("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
-    if lib.uniffi_audio_filter_uniffi_checksum_method_audiofilter_process_planar() != 51673:
+    if lib.uniffi_plugins_ai_coustics_uniffi_checksum_method_enhancer_process_planar() != 34627:
         raise InternalError("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
-    if lib.uniffi_audio_filter_uniffi_checksum_method_audiofilter_process_with_vad() != 9116:
+    if lib.uniffi_plugins_ai_coustics_uniffi_checksum_method_enhancer_process_with_vad() != 36609:
         raise InternalError("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
-    if lib.uniffi_audio_filter_uniffi_checksum_method_audiofilter_update_credentials() != 26174:
+    if lib.uniffi_plugins_ai_coustics_uniffi_checksum_method_enhancer_update_credentials() != 20156:
         raise InternalError("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
-    if lib.uniffi_audio_filter_uniffi_checksum_method_audiofilter_update_stream_info() != 30135:
+    if lib.uniffi_plugins_ai_coustics_uniffi_checksum_method_enhancer_update_stream_info() != 15469:
         raise InternalError("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
 
 # A ctypes library to expose the extern-C FFI definitions.
 # This is an implementation detail which will be called internally by the public API.
 
 _UniffiLib = _uniffi_load_indirect()
-_UniffiLib.ffi_audio_filter_uniffi_rustbuffer_alloc.argtypes = (
+_UniffiLib.ffi_plugins_ai_coustics_uniffi_rustbuffer_alloc.argtypes = (
     ctypes.c_uint64,
     ctypes.POINTER(_UniffiRustCallStatus),
 )
-_UniffiLib.ffi_audio_filter_uniffi_rustbuffer_alloc.restype = _UniffiRustBuffer
-_UniffiLib.ffi_audio_filter_uniffi_rustbuffer_from_bytes.argtypes = (
+_UniffiLib.ffi_plugins_ai_coustics_uniffi_rustbuffer_alloc.restype = _UniffiRustBuffer
+_UniffiLib.ffi_plugins_ai_coustics_uniffi_rustbuffer_from_bytes.argtypes = (
     _UniffiForeignBytes,
     ctypes.POINTER(_UniffiRustCallStatus),
 )
-_UniffiLib.ffi_audio_filter_uniffi_rustbuffer_from_bytes.restype = _UniffiRustBuffer
-_UniffiLib.ffi_audio_filter_uniffi_rustbuffer_free.argtypes = (
+_UniffiLib.ffi_plugins_ai_coustics_uniffi_rustbuffer_from_bytes.restype = _UniffiRustBuffer
+_UniffiLib.ffi_plugins_ai_coustics_uniffi_rustbuffer_free.argtypes = (
     _UniffiRustBuffer,
     ctypes.POINTER(_UniffiRustCallStatus),
 )
-_UniffiLib.ffi_audio_filter_uniffi_rustbuffer_free.restype = None
-_UniffiLib.ffi_audio_filter_uniffi_rustbuffer_reserve.argtypes = (
+_UniffiLib.ffi_plugins_ai_coustics_uniffi_rustbuffer_free.restype = None
+_UniffiLib.ffi_plugins_ai_coustics_uniffi_rustbuffer_reserve.argtypes = (
     _UniffiRustBuffer,
     ctypes.c_uint64,
     ctypes.POINTER(_UniffiRustCallStatus),
 )
-_UniffiLib.ffi_audio_filter_uniffi_rustbuffer_reserve.restype = _UniffiRustBuffer
+_UniffiLib.ffi_plugins_ai_coustics_uniffi_rustbuffer_reserve.restype = _UniffiRustBuffer
 _UNIFFI_RUST_FUTURE_CONTINUATION_CALLBACK = ctypes.CFUNCTYPE(None,ctypes.c_uint64,ctypes.c_int8,
 )
 _UNIFFI_FOREIGN_FUTURE_DROPPED_CALLBACK = ctypes.CFUNCTYPE(None,ctypes.c_uint64,
@@ -525,300 +525,300 @@ class _UniffiForeignFutureDroppedCallbackStruct(ctypes.Structure):
         ("handle", ctypes.c_uint64),
         ("free", _UNIFFI_FOREIGN_FUTURE_DROPPED_CALLBACK),
     ]
-_UniffiLib.ffi_audio_filter_uniffi_rust_future_poll_u8.argtypes = (
+_UniffiLib.ffi_plugins_ai_coustics_uniffi_rust_future_poll_u8.argtypes = (
     ctypes.c_uint64,
     _UNIFFI_RUST_FUTURE_CONTINUATION_CALLBACK,
     ctypes.c_uint64,
 )
-_UniffiLib.ffi_audio_filter_uniffi_rust_future_poll_u8.restype = None
-_UniffiLib.ffi_audio_filter_uniffi_rust_future_cancel_u8.argtypes = (
+_UniffiLib.ffi_plugins_ai_coustics_uniffi_rust_future_poll_u8.restype = None
+_UniffiLib.ffi_plugins_ai_coustics_uniffi_rust_future_cancel_u8.argtypes = (
     ctypes.c_uint64,
 )
-_UniffiLib.ffi_audio_filter_uniffi_rust_future_cancel_u8.restype = None
-_UniffiLib.ffi_audio_filter_uniffi_rust_future_complete_u8.argtypes = (
+_UniffiLib.ffi_plugins_ai_coustics_uniffi_rust_future_cancel_u8.restype = None
+_UniffiLib.ffi_plugins_ai_coustics_uniffi_rust_future_complete_u8.argtypes = (
     ctypes.c_uint64,
     ctypes.POINTER(_UniffiRustCallStatus),
 )
-_UniffiLib.ffi_audio_filter_uniffi_rust_future_complete_u8.restype = ctypes.c_uint8
-_UniffiLib.ffi_audio_filter_uniffi_rust_future_free_u8.argtypes = (
+_UniffiLib.ffi_plugins_ai_coustics_uniffi_rust_future_complete_u8.restype = ctypes.c_uint8
+_UniffiLib.ffi_plugins_ai_coustics_uniffi_rust_future_free_u8.argtypes = (
     ctypes.c_uint64,
 )
-_UniffiLib.ffi_audio_filter_uniffi_rust_future_free_u8.restype = None
-_UniffiLib.ffi_audio_filter_uniffi_rust_future_poll_i8.argtypes = (
+_UniffiLib.ffi_plugins_ai_coustics_uniffi_rust_future_free_u8.restype = None
+_UniffiLib.ffi_plugins_ai_coustics_uniffi_rust_future_poll_i8.argtypes = (
     ctypes.c_uint64,
     _UNIFFI_RUST_FUTURE_CONTINUATION_CALLBACK,
     ctypes.c_uint64,
 )
-_UniffiLib.ffi_audio_filter_uniffi_rust_future_poll_i8.restype = None
-_UniffiLib.ffi_audio_filter_uniffi_rust_future_cancel_i8.argtypes = (
+_UniffiLib.ffi_plugins_ai_coustics_uniffi_rust_future_poll_i8.restype = None
+_UniffiLib.ffi_plugins_ai_coustics_uniffi_rust_future_cancel_i8.argtypes = (
     ctypes.c_uint64,
 )
-_UniffiLib.ffi_audio_filter_uniffi_rust_future_cancel_i8.restype = None
-_UniffiLib.ffi_audio_filter_uniffi_rust_future_complete_i8.argtypes = (
+_UniffiLib.ffi_plugins_ai_coustics_uniffi_rust_future_cancel_i8.restype = None
+_UniffiLib.ffi_plugins_ai_coustics_uniffi_rust_future_complete_i8.argtypes = (
     ctypes.c_uint64,
     ctypes.POINTER(_UniffiRustCallStatus),
 )
-_UniffiLib.ffi_audio_filter_uniffi_rust_future_complete_i8.restype = ctypes.c_int8
-_UniffiLib.ffi_audio_filter_uniffi_rust_future_free_i8.argtypes = (
+_UniffiLib.ffi_plugins_ai_coustics_uniffi_rust_future_complete_i8.restype = ctypes.c_int8
+_UniffiLib.ffi_plugins_ai_coustics_uniffi_rust_future_free_i8.argtypes = (
     ctypes.c_uint64,
 )
-_UniffiLib.ffi_audio_filter_uniffi_rust_future_free_i8.restype = None
-_UniffiLib.ffi_audio_filter_uniffi_rust_future_poll_u16.argtypes = (
+_UniffiLib.ffi_plugins_ai_coustics_uniffi_rust_future_free_i8.restype = None
+_UniffiLib.ffi_plugins_ai_coustics_uniffi_rust_future_poll_u16.argtypes = (
     ctypes.c_uint64,
     _UNIFFI_RUST_FUTURE_CONTINUATION_CALLBACK,
     ctypes.c_uint64,
 )
-_UniffiLib.ffi_audio_filter_uniffi_rust_future_poll_u16.restype = None
-_UniffiLib.ffi_audio_filter_uniffi_rust_future_cancel_u16.argtypes = (
+_UniffiLib.ffi_plugins_ai_coustics_uniffi_rust_future_poll_u16.restype = None
+_UniffiLib.ffi_plugins_ai_coustics_uniffi_rust_future_cancel_u16.argtypes = (
     ctypes.c_uint64,
 )
-_UniffiLib.ffi_audio_filter_uniffi_rust_future_cancel_u16.restype = None
-_UniffiLib.ffi_audio_filter_uniffi_rust_future_complete_u16.argtypes = (
+_UniffiLib.ffi_plugins_ai_coustics_uniffi_rust_future_cancel_u16.restype = None
+_UniffiLib.ffi_plugins_ai_coustics_uniffi_rust_future_complete_u16.argtypes = (
     ctypes.c_uint64,
     ctypes.POINTER(_UniffiRustCallStatus),
 )
-_UniffiLib.ffi_audio_filter_uniffi_rust_future_complete_u16.restype = ctypes.c_uint16
-_UniffiLib.ffi_audio_filter_uniffi_rust_future_free_u16.argtypes = (
+_UniffiLib.ffi_plugins_ai_coustics_uniffi_rust_future_complete_u16.restype = ctypes.c_uint16
+_UniffiLib.ffi_plugins_ai_coustics_uniffi_rust_future_free_u16.argtypes = (
     ctypes.c_uint64,
 )
-_UniffiLib.ffi_audio_filter_uniffi_rust_future_free_u16.restype = None
-_UniffiLib.ffi_audio_filter_uniffi_rust_future_poll_i16.argtypes = (
+_UniffiLib.ffi_plugins_ai_coustics_uniffi_rust_future_free_u16.restype = None
+_UniffiLib.ffi_plugins_ai_coustics_uniffi_rust_future_poll_i16.argtypes = (
     ctypes.c_uint64,
     _UNIFFI_RUST_FUTURE_CONTINUATION_CALLBACK,
     ctypes.c_uint64,
 )
-_UniffiLib.ffi_audio_filter_uniffi_rust_future_poll_i16.restype = None
-_UniffiLib.ffi_audio_filter_uniffi_rust_future_cancel_i16.argtypes = (
+_UniffiLib.ffi_plugins_ai_coustics_uniffi_rust_future_poll_i16.restype = None
+_UniffiLib.ffi_plugins_ai_coustics_uniffi_rust_future_cancel_i16.argtypes = (
     ctypes.c_uint64,
 )
-_UniffiLib.ffi_audio_filter_uniffi_rust_future_cancel_i16.restype = None
-_UniffiLib.ffi_audio_filter_uniffi_rust_future_complete_i16.argtypes = (
+_UniffiLib.ffi_plugins_ai_coustics_uniffi_rust_future_cancel_i16.restype = None
+_UniffiLib.ffi_plugins_ai_coustics_uniffi_rust_future_complete_i16.argtypes = (
     ctypes.c_uint64,
     ctypes.POINTER(_UniffiRustCallStatus),
 )
-_UniffiLib.ffi_audio_filter_uniffi_rust_future_complete_i16.restype = ctypes.c_int16
-_UniffiLib.ffi_audio_filter_uniffi_rust_future_free_i16.argtypes = (
+_UniffiLib.ffi_plugins_ai_coustics_uniffi_rust_future_complete_i16.restype = ctypes.c_int16
+_UniffiLib.ffi_plugins_ai_coustics_uniffi_rust_future_free_i16.argtypes = (
     ctypes.c_uint64,
 )
-_UniffiLib.ffi_audio_filter_uniffi_rust_future_free_i16.restype = None
-_UniffiLib.ffi_audio_filter_uniffi_rust_future_poll_u32.argtypes = (
+_UniffiLib.ffi_plugins_ai_coustics_uniffi_rust_future_free_i16.restype = None
+_UniffiLib.ffi_plugins_ai_coustics_uniffi_rust_future_poll_u32.argtypes = (
     ctypes.c_uint64,
     _UNIFFI_RUST_FUTURE_CONTINUATION_CALLBACK,
     ctypes.c_uint64,
 )
-_UniffiLib.ffi_audio_filter_uniffi_rust_future_poll_u32.restype = None
-_UniffiLib.ffi_audio_filter_uniffi_rust_future_cancel_u32.argtypes = (
+_UniffiLib.ffi_plugins_ai_coustics_uniffi_rust_future_poll_u32.restype = None
+_UniffiLib.ffi_plugins_ai_coustics_uniffi_rust_future_cancel_u32.argtypes = (
     ctypes.c_uint64,
 )
-_UniffiLib.ffi_audio_filter_uniffi_rust_future_cancel_u32.restype = None
-_UniffiLib.ffi_audio_filter_uniffi_rust_future_complete_u32.argtypes = (
+_UniffiLib.ffi_plugins_ai_coustics_uniffi_rust_future_cancel_u32.restype = None
+_UniffiLib.ffi_plugins_ai_coustics_uniffi_rust_future_complete_u32.argtypes = (
     ctypes.c_uint64,
     ctypes.POINTER(_UniffiRustCallStatus),
 )
-_UniffiLib.ffi_audio_filter_uniffi_rust_future_complete_u32.restype = ctypes.c_uint32
-_UniffiLib.ffi_audio_filter_uniffi_rust_future_free_u32.argtypes = (
+_UniffiLib.ffi_plugins_ai_coustics_uniffi_rust_future_complete_u32.restype = ctypes.c_uint32
+_UniffiLib.ffi_plugins_ai_coustics_uniffi_rust_future_free_u32.argtypes = (
     ctypes.c_uint64,
 )
-_UniffiLib.ffi_audio_filter_uniffi_rust_future_free_u32.restype = None
-_UniffiLib.ffi_audio_filter_uniffi_rust_future_poll_i32.argtypes = (
+_UniffiLib.ffi_plugins_ai_coustics_uniffi_rust_future_free_u32.restype = None
+_UniffiLib.ffi_plugins_ai_coustics_uniffi_rust_future_poll_i32.argtypes = (
     ctypes.c_uint64,
     _UNIFFI_RUST_FUTURE_CONTINUATION_CALLBACK,
     ctypes.c_uint64,
 )
-_UniffiLib.ffi_audio_filter_uniffi_rust_future_poll_i32.restype = None
-_UniffiLib.ffi_audio_filter_uniffi_rust_future_cancel_i32.argtypes = (
+_UniffiLib.ffi_plugins_ai_coustics_uniffi_rust_future_poll_i32.restype = None
+_UniffiLib.ffi_plugins_ai_coustics_uniffi_rust_future_cancel_i32.argtypes = (
     ctypes.c_uint64,
 )
-_UniffiLib.ffi_audio_filter_uniffi_rust_future_cancel_i32.restype = None
-_UniffiLib.ffi_audio_filter_uniffi_rust_future_complete_i32.argtypes = (
+_UniffiLib.ffi_plugins_ai_coustics_uniffi_rust_future_cancel_i32.restype = None
+_UniffiLib.ffi_plugins_ai_coustics_uniffi_rust_future_complete_i32.argtypes = (
     ctypes.c_uint64,
     ctypes.POINTER(_UniffiRustCallStatus),
 )
-_UniffiLib.ffi_audio_filter_uniffi_rust_future_complete_i32.restype = ctypes.c_int32
-_UniffiLib.ffi_audio_filter_uniffi_rust_future_free_i32.argtypes = (
+_UniffiLib.ffi_plugins_ai_coustics_uniffi_rust_future_complete_i32.restype = ctypes.c_int32
+_UniffiLib.ffi_plugins_ai_coustics_uniffi_rust_future_free_i32.argtypes = (
     ctypes.c_uint64,
 )
-_UniffiLib.ffi_audio_filter_uniffi_rust_future_free_i32.restype = None
-_UniffiLib.ffi_audio_filter_uniffi_rust_future_poll_u64.argtypes = (
+_UniffiLib.ffi_plugins_ai_coustics_uniffi_rust_future_free_i32.restype = None
+_UniffiLib.ffi_plugins_ai_coustics_uniffi_rust_future_poll_u64.argtypes = (
     ctypes.c_uint64,
     _UNIFFI_RUST_FUTURE_CONTINUATION_CALLBACK,
     ctypes.c_uint64,
 )
-_UniffiLib.ffi_audio_filter_uniffi_rust_future_poll_u64.restype = None
-_UniffiLib.ffi_audio_filter_uniffi_rust_future_cancel_u64.argtypes = (
+_UniffiLib.ffi_plugins_ai_coustics_uniffi_rust_future_poll_u64.restype = None
+_UniffiLib.ffi_plugins_ai_coustics_uniffi_rust_future_cancel_u64.argtypes = (
     ctypes.c_uint64,
 )
-_UniffiLib.ffi_audio_filter_uniffi_rust_future_cancel_u64.restype = None
-_UniffiLib.ffi_audio_filter_uniffi_rust_future_complete_u64.argtypes = (
+_UniffiLib.ffi_plugins_ai_coustics_uniffi_rust_future_cancel_u64.restype = None
+_UniffiLib.ffi_plugins_ai_coustics_uniffi_rust_future_complete_u64.argtypes = (
     ctypes.c_uint64,
     ctypes.POINTER(_UniffiRustCallStatus),
 )
-_UniffiLib.ffi_audio_filter_uniffi_rust_future_complete_u64.restype = ctypes.c_uint64
-_UniffiLib.ffi_audio_filter_uniffi_rust_future_free_u64.argtypes = (
+_UniffiLib.ffi_plugins_ai_coustics_uniffi_rust_future_complete_u64.restype = ctypes.c_uint64
+_UniffiLib.ffi_plugins_ai_coustics_uniffi_rust_future_free_u64.argtypes = (
     ctypes.c_uint64,
 )
-_UniffiLib.ffi_audio_filter_uniffi_rust_future_free_u64.restype = None
-_UniffiLib.ffi_audio_filter_uniffi_rust_future_poll_i64.argtypes = (
+_UniffiLib.ffi_plugins_ai_coustics_uniffi_rust_future_free_u64.restype = None
+_UniffiLib.ffi_plugins_ai_coustics_uniffi_rust_future_poll_i64.argtypes = (
     ctypes.c_uint64,
     _UNIFFI_RUST_FUTURE_CONTINUATION_CALLBACK,
     ctypes.c_uint64,
 )
-_UniffiLib.ffi_audio_filter_uniffi_rust_future_poll_i64.restype = None
-_UniffiLib.ffi_audio_filter_uniffi_rust_future_cancel_i64.argtypes = (
+_UniffiLib.ffi_plugins_ai_coustics_uniffi_rust_future_poll_i64.restype = None
+_UniffiLib.ffi_plugins_ai_coustics_uniffi_rust_future_cancel_i64.argtypes = (
     ctypes.c_uint64,
 )
-_UniffiLib.ffi_audio_filter_uniffi_rust_future_cancel_i64.restype = None
-_UniffiLib.ffi_audio_filter_uniffi_rust_future_complete_i64.argtypes = (
+_UniffiLib.ffi_plugins_ai_coustics_uniffi_rust_future_cancel_i64.restype = None
+_UniffiLib.ffi_plugins_ai_coustics_uniffi_rust_future_complete_i64.argtypes = (
     ctypes.c_uint64,
     ctypes.POINTER(_UniffiRustCallStatus),
 )
-_UniffiLib.ffi_audio_filter_uniffi_rust_future_complete_i64.restype = ctypes.c_int64
-_UniffiLib.ffi_audio_filter_uniffi_rust_future_free_i64.argtypes = (
+_UniffiLib.ffi_plugins_ai_coustics_uniffi_rust_future_complete_i64.restype = ctypes.c_int64
+_UniffiLib.ffi_plugins_ai_coustics_uniffi_rust_future_free_i64.argtypes = (
     ctypes.c_uint64,
 )
-_UniffiLib.ffi_audio_filter_uniffi_rust_future_free_i64.restype = None
-_UniffiLib.ffi_audio_filter_uniffi_rust_future_poll_f32.argtypes = (
+_UniffiLib.ffi_plugins_ai_coustics_uniffi_rust_future_free_i64.restype = None
+_UniffiLib.ffi_plugins_ai_coustics_uniffi_rust_future_poll_f32.argtypes = (
     ctypes.c_uint64,
     _UNIFFI_RUST_FUTURE_CONTINUATION_CALLBACK,
     ctypes.c_uint64,
 )
-_UniffiLib.ffi_audio_filter_uniffi_rust_future_poll_f32.restype = None
-_UniffiLib.ffi_audio_filter_uniffi_rust_future_cancel_f32.argtypes = (
+_UniffiLib.ffi_plugins_ai_coustics_uniffi_rust_future_poll_f32.restype = None
+_UniffiLib.ffi_plugins_ai_coustics_uniffi_rust_future_cancel_f32.argtypes = (
     ctypes.c_uint64,
 )
-_UniffiLib.ffi_audio_filter_uniffi_rust_future_cancel_f32.restype = None
-_UniffiLib.ffi_audio_filter_uniffi_rust_future_complete_f32.argtypes = (
+_UniffiLib.ffi_plugins_ai_coustics_uniffi_rust_future_cancel_f32.restype = None
+_UniffiLib.ffi_plugins_ai_coustics_uniffi_rust_future_complete_f32.argtypes = (
     ctypes.c_uint64,
     ctypes.POINTER(_UniffiRustCallStatus),
 )
-_UniffiLib.ffi_audio_filter_uniffi_rust_future_complete_f32.restype = ctypes.c_float
-_UniffiLib.ffi_audio_filter_uniffi_rust_future_free_f32.argtypes = (
+_UniffiLib.ffi_plugins_ai_coustics_uniffi_rust_future_complete_f32.restype = ctypes.c_float
+_UniffiLib.ffi_plugins_ai_coustics_uniffi_rust_future_free_f32.argtypes = (
     ctypes.c_uint64,
 )
-_UniffiLib.ffi_audio_filter_uniffi_rust_future_free_f32.restype = None
-_UniffiLib.ffi_audio_filter_uniffi_rust_future_poll_f64.argtypes = (
+_UniffiLib.ffi_plugins_ai_coustics_uniffi_rust_future_free_f32.restype = None
+_UniffiLib.ffi_plugins_ai_coustics_uniffi_rust_future_poll_f64.argtypes = (
     ctypes.c_uint64,
     _UNIFFI_RUST_FUTURE_CONTINUATION_CALLBACK,
     ctypes.c_uint64,
 )
-_UniffiLib.ffi_audio_filter_uniffi_rust_future_poll_f64.restype = None
-_UniffiLib.ffi_audio_filter_uniffi_rust_future_cancel_f64.argtypes = (
+_UniffiLib.ffi_plugins_ai_coustics_uniffi_rust_future_poll_f64.restype = None
+_UniffiLib.ffi_plugins_ai_coustics_uniffi_rust_future_cancel_f64.argtypes = (
     ctypes.c_uint64,
 )
-_UniffiLib.ffi_audio_filter_uniffi_rust_future_cancel_f64.restype = None
-_UniffiLib.ffi_audio_filter_uniffi_rust_future_complete_f64.argtypes = (
+_UniffiLib.ffi_plugins_ai_coustics_uniffi_rust_future_cancel_f64.restype = None
+_UniffiLib.ffi_plugins_ai_coustics_uniffi_rust_future_complete_f64.argtypes = (
     ctypes.c_uint64,
     ctypes.POINTER(_UniffiRustCallStatus),
 )
-_UniffiLib.ffi_audio_filter_uniffi_rust_future_complete_f64.restype = ctypes.c_double
-_UniffiLib.ffi_audio_filter_uniffi_rust_future_free_f64.argtypes = (
+_UniffiLib.ffi_plugins_ai_coustics_uniffi_rust_future_complete_f64.restype = ctypes.c_double
+_UniffiLib.ffi_plugins_ai_coustics_uniffi_rust_future_free_f64.argtypes = (
     ctypes.c_uint64,
 )
-_UniffiLib.ffi_audio_filter_uniffi_rust_future_free_f64.restype = None
-_UniffiLib.ffi_audio_filter_uniffi_rust_future_poll_rust_buffer.argtypes = (
+_UniffiLib.ffi_plugins_ai_coustics_uniffi_rust_future_free_f64.restype = None
+_UniffiLib.ffi_plugins_ai_coustics_uniffi_rust_future_poll_rust_buffer.argtypes = (
     ctypes.c_uint64,
     _UNIFFI_RUST_FUTURE_CONTINUATION_CALLBACK,
     ctypes.c_uint64,
 )
-_UniffiLib.ffi_audio_filter_uniffi_rust_future_poll_rust_buffer.restype = None
-_UniffiLib.ffi_audio_filter_uniffi_rust_future_cancel_rust_buffer.argtypes = (
+_UniffiLib.ffi_plugins_ai_coustics_uniffi_rust_future_poll_rust_buffer.restype = None
+_UniffiLib.ffi_plugins_ai_coustics_uniffi_rust_future_cancel_rust_buffer.argtypes = (
     ctypes.c_uint64,
 )
-_UniffiLib.ffi_audio_filter_uniffi_rust_future_cancel_rust_buffer.restype = None
-_UniffiLib.ffi_audio_filter_uniffi_rust_future_complete_rust_buffer.argtypes = (
+_UniffiLib.ffi_plugins_ai_coustics_uniffi_rust_future_cancel_rust_buffer.restype = None
+_UniffiLib.ffi_plugins_ai_coustics_uniffi_rust_future_complete_rust_buffer.argtypes = (
     ctypes.c_uint64,
     ctypes.POINTER(_UniffiRustCallStatus),
 )
-_UniffiLib.ffi_audio_filter_uniffi_rust_future_complete_rust_buffer.restype = _UniffiRustBuffer
-_UniffiLib.ffi_audio_filter_uniffi_rust_future_free_rust_buffer.argtypes = (
+_UniffiLib.ffi_plugins_ai_coustics_uniffi_rust_future_complete_rust_buffer.restype = _UniffiRustBuffer
+_UniffiLib.ffi_plugins_ai_coustics_uniffi_rust_future_free_rust_buffer.argtypes = (
     ctypes.c_uint64,
 )
-_UniffiLib.ffi_audio_filter_uniffi_rust_future_free_rust_buffer.restype = None
-_UniffiLib.ffi_audio_filter_uniffi_rust_future_poll_void.argtypes = (
+_UniffiLib.ffi_plugins_ai_coustics_uniffi_rust_future_free_rust_buffer.restype = None
+_UniffiLib.ffi_plugins_ai_coustics_uniffi_rust_future_poll_void.argtypes = (
     ctypes.c_uint64,
     _UNIFFI_RUST_FUTURE_CONTINUATION_CALLBACK,
     ctypes.c_uint64,
 )
-_UniffiLib.ffi_audio_filter_uniffi_rust_future_poll_void.restype = None
-_UniffiLib.ffi_audio_filter_uniffi_rust_future_cancel_void.argtypes = (
+_UniffiLib.ffi_plugins_ai_coustics_uniffi_rust_future_poll_void.restype = None
+_UniffiLib.ffi_plugins_ai_coustics_uniffi_rust_future_cancel_void.argtypes = (
     ctypes.c_uint64,
 )
-_UniffiLib.ffi_audio_filter_uniffi_rust_future_cancel_void.restype = None
-_UniffiLib.ffi_audio_filter_uniffi_rust_future_complete_void.argtypes = (
-    ctypes.c_uint64,
-    ctypes.POINTER(_UniffiRustCallStatus),
-)
-_UniffiLib.ffi_audio_filter_uniffi_rust_future_complete_void.restype = None
-_UniffiLib.ffi_audio_filter_uniffi_rust_future_free_void.argtypes = (
-    ctypes.c_uint64,
-)
-_UniffiLib.ffi_audio_filter_uniffi_rust_future_free_void.restype = None
-_UniffiLib.uniffi_audio_filter_uniffi_fn_clone_audiofilter.argtypes = (
+_UniffiLib.ffi_plugins_ai_coustics_uniffi_rust_future_cancel_void.restype = None
+_UniffiLib.ffi_plugins_ai_coustics_uniffi_rust_future_complete_void.argtypes = (
     ctypes.c_uint64,
     ctypes.POINTER(_UniffiRustCallStatus),
 )
-_UniffiLib.uniffi_audio_filter_uniffi_fn_clone_audiofilter.restype = ctypes.c_uint64
-_UniffiLib.uniffi_audio_filter_uniffi_fn_free_audiofilter.argtypes = (
+_UniffiLib.ffi_plugins_ai_coustics_uniffi_rust_future_complete_void.restype = None
+_UniffiLib.ffi_plugins_ai_coustics_uniffi_rust_future_free_void.argtypes = (
+    ctypes.c_uint64,
+)
+_UniffiLib.ffi_plugins_ai_coustics_uniffi_rust_future_free_void.restype = None
+_UniffiLib.uniffi_plugins_ai_coustics_uniffi_fn_clone_enhancer.argtypes = (
     ctypes.c_uint64,
     ctypes.POINTER(_UniffiRustCallStatus),
 )
-_UniffiLib.uniffi_audio_filter_uniffi_fn_free_audiofilter.restype = None
-_UniffiLib.uniffi_audio_filter_uniffi_fn_constructor_audiofilter_new.argtypes = (
+_UniffiLib.uniffi_plugins_ai_coustics_uniffi_fn_clone_enhancer.restype = ctypes.c_uint64
+_UniffiLib.uniffi_plugins_ai_coustics_uniffi_fn_free_enhancer.argtypes = (
+    ctypes.c_uint64,
+    ctypes.POINTER(_UniffiRustCallStatus),
+)
+_UniffiLib.uniffi_plugins_ai_coustics_uniffi_fn_free_enhancer.restype = None
+_UniffiLib.uniffi_plugins_ai_coustics_uniffi_fn_constructor_enhancer_new.argtypes = (
     _UniffiRustBuffer,
     ctypes.POINTER(_UniffiRustCallStatus),
 )
-_UniffiLib.uniffi_audio_filter_uniffi_fn_constructor_audiofilter_new.restype = ctypes.c_uint64
-_UniffiLib.uniffi_audio_filter_uniffi_fn_method_audiofilter_process.argtypes = (
-    ctypes.c_uint64,
-    _UniffiRustBuffer,
-    ctypes.POINTER(_UniffiRustCallStatus),
-)
-_UniffiLib.uniffi_audio_filter_uniffi_fn_method_audiofilter_process.restype = None
-_UniffiLib.uniffi_audio_filter_uniffi_fn_method_audiofilter_process_planar.argtypes = (
+_UniffiLib.uniffi_plugins_ai_coustics_uniffi_fn_constructor_enhancer_new.restype = ctypes.c_uint64
+_UniffiLib.uniffi_plugins_ai_coustics_uniffi_fn_method_enhancer_process.argtypes = (
     ctypes.c_uint64,
     _UniffiRustBuffer,
     ctypes.POINTER(_UniffiRustCallStatus),
 )
-_UniffiLib.uniffi_audio_filter_uniffi_fn_method_audiofilter_process_planar.restype = None
-_UniffiLib.uniffi_audio_filter_uniffi_fn_method_audiofilter_process_with_vad.argtypes = (
+_UniffiLib.uniffi_plugins_ai_coustics_uniffi_fn_method_enhancer_process.restype = None
+_UniffiLib.uniffi_plugins_ai_coustics_uniffi_fn_method_enhancer_process_planar.argtypes = (
     ctypes.c_uint64,
     _UniffiRustBuffer,
     ctypes.POINTER(_UniffiRustCallStatus),
 )
-_UniffiLib.uniffi_audio_filter_uniffi_fn_method_audiofilter_process_with_vad.restype = ctypes.c_int8
-_UniffiLib.uniffi_audio_filter_uniffi_fn_method_audiofilter_update_credentials.argtypes = (
+_UniffiLib.uniffi_plugins_ai_coustics_uniffi_fn_method_enhancer_process_planar.restype = None
+_UniffiLib.uniffi_plugins_ai_coustics_uniffi_fn_method_enhancer_process_with_vad.argtypes = (
     ctypes.c_uint64,
     _UniffiRustBuffer,
     ctypes.POINTER(_UniffiRustCallStatus),
 )
-_UniffiLib.uniffi_audio_filter_uniffi_fn_method_audiofilter_update_credentials.restype = None
-_UniffiLib.uniffi_audio_filter_uniffi_fn_method_audiofilter_update_stream_info.argtypes = (
+_UniffiLib.uniffi_plugins_ai_coustics_uniffi_fn_method_enhancer_process_with_vad.restype = ctypes.c_int8
+_UniffiLib.uniffi_plugins_ai_coustics_uniffi_fn_method_enhancer_update_credentials.argtypes = (
     ctypes.c_uint64,
     _UniffiRustBuffer,
     ctypes.POINTER(_UniffiRustCallStatus),
 )
-_UniffiLib.uniffi_audio_filter_uniffi_fn_method_audiofilter_update_stream_info.restype = None
-_UniffiLib.ffi_audio_filter_uniffi_uniffi_contract_version.argtypes = (
+_UniffiLib.uniffi_plugins_ai_coustics_uniffi_fn_method_enhancer_update_credentials.restype = None
+_UniffiLib.uniffi_plugins_ai_coustics_uniffi_fn_method_enhancer_update_stream_info.argtypes = (
+    ctypes.c_uint64,
+    _UniffiRustBuffer,
+    ctypes.POINTER(_UniffiRustCallStatus),
 )
-_UniffiLib.ffi_audio_filter_uniffi_uniffi_contract_version.restype = ctypes.c_uint32
-_UniffiLib.uniffi_audio_filter_uniffi_checksum_constructor_audiofilter_new.argtypes = (
+_UniffiLib.uniffi_plugins_ai_coustics_uniffi_fn_method_enhancer_update_stream_info.restype = None
+_UniffiLib.ffi_plugins_ai_coustics_uniffi_uniffi_contract_version.argtypes = (
 )
-_UniffiLib.uniffi_audio_filter_uniffi_checksum_constructor_audiofilter_new.restype = ctypes.c_uint16
-_UniffiLib.uniffi_audio_filter_uniffi_checksum_method_audiofilter_process.argtypes = (
+_UniffiLib.ffi_plugins_ai_coustics_uniffi_uniffi_contract_version.restype = ctypes.c_uint32
+_UniffiLib.uniffi_plugins_ai_coustics_uniffi_checksum_constructor_enhancer_new.argtypes = (
 )
-_UniffiLib.uniffi_audio_filter_uniffi_checksum_method_audiofilter_process.restype = ctypes.c_uint16
-_UniffiLib.uniffi_audio_filter_uniffi_checksum_method_audiofilter_process_planar.argtypes = (
+_UniffiLib.uniffi_plugins_ai_coustics_uniffi_checksum_constructor_enhancer_new.restype = ctypes.c_uint16
+_UniffiLib.uniffi_plugins_ai_coustics_uniffi_checksum_method_enhancer_process.argtypes = (
 )
-_UniffiLib.uniffi_audio_filter_uniffi_checksum_method_audiofilter_process_planar.restype = ctypes.c_uint16
-_UniffiLib.uniffi_audio_filter_uniffi_checksum_method_audiofilter_process_with_vad.argtypes = (
+_UniffiLib.uniffi_plugins_ai_coustics_uniffi_checksum_method_enhancer_process.restype = ctypes.c_uint16
+_UniffiLib.uniffi_plugins_ai_coustics_uniffi_checksum_method_enhancer_process_planar.argtypes = (
 )
-_UniffiLib.uniffi_audio_filter_uniffi_checksum_method_audiofilter_process_with_vad.restype = ctypes.c_uint16
-_UniffiLib.uniffi_audio_filter_uniffi_checksum_method_audiofilter_update_credentials.argtypes = (
+_UniffiLib.uniffi_plugins_ai_coustics_uniffi_checksum_method_enhancer_process_planar.restype = ctypes.c_uint16
+_UniffiLib.uniffi_plugins_ai_coustics_uniffi_checksum_method_enhancer_process_with_vad.argtypes = (
 )
-_UniffiLib.uniffi_audio_filter_uniffi_checksum_method_audiofilter_update_credentials.restype = ctypes.c_uint16
-_UniffiLib.uniffi_audio_filter_uniffi_checksum_method_audiofilter_update_stream_info.argtypes = (
+_UniffiLib.uniffi_plugins_ai_coustics_uniffi_checksum_method_enhancer_process_with_vad.restype = ctypes.c_uint16
+_UniffiLib.uniffi_plugins_ai_coustics_uniffi_checksum_method_enhancer_update_credentials.argtypes = (
 )
-_UniffiLib.uniffi_audio_filter_uniffi_checksum_method_audiofilter_update_stream_info.restype = ctypes.c_uint16
+_UniffiLib.uniffi_plugins_ai_coustics_uniffi_checksum_method_enhancer_update_credentials.restype = ctypes.c_uint16
+_UniffiLib.uniffi_plugins_ai_coustics_uniffi_checksum_method_enhancer_update_stream_info.argtypes = (
+)
+_UniffiLib.uniffi_plugins_ai_coustics_uniffi_checksum_method_enhancer_update_stream_info.restype = ctypes.c_uint16
 
 _uniffi_check_contract_api_version(_UniffiLib)
 # _uniffi_check_api_checksums(_UniffiLib)
@@ -861,7 +861,7 @@ class _UniffiFfiConverterString:
             return builder.finalize()
 
 @dataclass
-class AudioFilterCredentials:
+class Credentials:
     def __init__(self, *, url:str, token:str):
         self.url = url
         self.token = token
@@ -870,7 +870,7 @@ class AudioFilterCredentials:
 
     
     def __str__(self):
-        return "AudioFilterCredentials(url={}, token={})".format(self.url, self.token)
+        return "Credentials(url={}, token={})".format(self.url, self.token)
     def __eq__(self, other):
         if self.url != other.url:
             return False
@@ -878,10 +878,10 @@ class AudioFilterCredentials:
             return False
         return True
 
-class _UniffiFfiConverterTypeAudioFilterCredentials(_UniffiConverterRustBuffer):
+class _UniffiFfiConverterTypeCredentials(_UniffiConverterRustBuffer):
     @staticmethod
     def read(buf):
-        return AudioFilterCredentials(
+        return Credentials(
             url=_UniffiFfiConverterString.read(buf),
             token=_UniffiFfiConverterString.read(buf),
         )
@@ -927,45 +927,45 @@ class _UniffiFfiConverterUInt16(_UniffiConverterPrimitiveInt):
 
 
 
-class AudioFilterModel(enum.Enum):
+class EnhancerModel(enum.Enum):
     
-    QUAIL_STT = 0
+    QUAIL_L = 0
     
-    QUAIL_S = 1
+    SPARROW_S = 1
     
-    QUAIL_L = 2
+    SPARROW_L = 2
     
 
 
-class _UniffiFfiConverterTypeAudioFilterModel(_UniffiConverterRustBuffer):
+class _UniffiFfiConverterTypeEnhancerModel(_UniffiConverterRustBuffer):
     @staticmethod
     def read(buf):
         variant = buf.read_i32()
         if variant == 1:
-            return AudioFilterModel.QUAIL_STT
+            return EnhancerModel.QUAIL_L
         if variant == 2:
-            return AudioFilterModel.QUAIL_S
+            return EnhancerModel.SPARROW_S
         if variant == 3:
-            return AudioFilterModel.QUAIL_L
+            return EnhancerModel.SPARROW_L
         raise InternalError("Raw enum value doesn't match any cases")
 
     @staticmethod
     def check_lower(value):
-        if value == AudioFilterModel.QUAIL_STT:
+        if value == EnhancerModel.QUAIL_L:
             return
-        if value == AudioFilterModel.QUAIL_S:
+        if value == EnhancerModel.SPARROW_S:
             return
-        if value == AudioFilterModel.QUAIL_L:
+        if value == EnhancerModel.SPARROW_L:
             return
         raise ValueError(value)
 
     @staticmethod
     def write(value, buf):
-        if value == AudioFilterModel.QUAIL_STT:
+        if value == EnhancerModel.QUAIL_L:
             buf.write_i32(1)
-        if value == AudioFilterModel.QUAIL_S:
+        if value == EnhancerModel.SPARROW_S:
             buf.write_i32(2)
-        if value == AudioFilterModel.QUAIL_L:
+        if value == EnhancerModel.SPARROW_L:
             buf.write_i32(3)
 
 
@@ -1006,19 +1006,22 @@ class _UniffiFfiConverterOptionalFloat32(_UniffiConverterRustBuffer):
 
 @dataclass
 class VadSettings:
-    def __init__(self, *, lookback_buffer_size:typing.Optional[float], sensitivity:typing.Optional[float]):
-        self.lookback_buffer_size = lookback_buffer_size
+    def __init__(self, *, speech_hold_duration:typing.Optional[float], sensitivity:typing.Optional[float], minimum_speech_duration:typing.Optional[float]):
+        self.speech_hold_duration = speech_hold_duration
         self.sensitivity = sensitivity
+        self.minimum_speech_duration = minimum_speech_duration
         
         
 
     
     def __str__(self):
-        return "VadSettings(lookback_buffer_size={}, sensitivity={})".format(self.lookback_buffer_size, self.sensitivity)
+        return "VadSettings(speech_hold_duration={}, sensitivity={}, minimum_speech_duration={})".format(self.speech_hold_duration, self.sensitivity, self.minimum_speech_duration)
     def __eq__(self, other):
-        if self.lookback_buffer_size != other.lookback_buffer_size:
+        if self.speech_hold_duration != other.speech_hold_duration:
             return False
         if self.sensitivity != other.sensitivity:
+            return False
+        if self.minimum_speech_duration != other.minimum_speech_duration:
             return False
         return True
 
@@ -1026,23 +1029,26 @@ class _UniffiFfiConverterTypeVadSettings(_UniffiConverterRustBuffer):
     @staticmethod
     def read(buf):
         return VadSettings(
-            lookback_buffer_size=_UniffiFfiConverterOptionalFloat32.read(buf),
+            speech_hold_duration=_UniffiFfiConverterOptionalFloat32.read(buf),
             sensitivity=_UniffiFfiConverterOptionalFloat32.read(buf),
+            minimum_speech_duration=_UniffiFfiConverterOptionalFloat32.read(buf),
         )
 
     @staticmethod
     def check_lower(value):
-        _UniffiFfiConverterOptionalFloat32.check_lower(value.lookback_buffer_size)
+        _UniffiFfiConverterOptionalFloat32.check_lower(value.speech_hold_duration)
         _UniffiFfiConverterOptionalFloat32.check_lower(value.sensitivity)
+        _UniffiFfiConverterOptionalFloat32.check_lower(value.minimum_speech_duration)
 
     @staticmethod
     def write(value, buf):
-        _UniffiFfiConverterOptionalFloat32.write(value.lookback_buffer_size, buf)
+        _UniffiFfiConverterOptionalFloat32.write(value.speech_hold_duration, buf)
         _UniffiFfiConverterOptionalFloat32.write(value.sensitivity, buf)
+        _UniffiFfiConverterOptionalFloat32.write(value.minimum_speech_duration, buf)
 
 @dataclass
-class AudioFilterSettings:
-    def __init__(self, *, sample_rate:int, num_channels:int, samples_per_channel:int, credentials:AudioFilterCredentials, model:AudioFilterModel, vad:VadSettings):
+class EnhancerSettings:
+    def __init__(self, *, sample_rate:int, num_channels:int, samples_per_channel:int, credentials:Credentials, model:EnhancerModel, vad:VadSettings):
         self.sample_rate = sample_rate
         self.num_channels = num_channels
         self.samples_per_channel = samples_per_channel
@@ -1054,7 +1060,7 @@ class AudioFilterSettings:
 
     
     def __str__(self):
-        return "AudioFilterSettings(sample_rate={}, num_channels={}, samples_per_channel={}, credentials={}, model={}, vad={})".format(self.sample_rate, self.num_channels, self.samples_per_channel, self.credentials, self.model, self.vad)
+        return "EnhancerSettings(sample_rate={}, num_channels={}, samples_per_channel={}, credentials={}, model={}, vad={})".format(self.sample_rate, self.num_channels, self.samples_per_channel, self.credentials, self.model, self.vad)
     def __eq__(self, other):
         if self.sample_rate != other.sample_rate:
             return False
@@ -1070,15 +1076,15 @@ class AudioFilterSettings:
             return False
         return True
 
-class _UniffiFfiConverterTypeAudioFilterSettings(_UniffiConverterRustBuffer):
+class _UniffiFfiConverterTypeEnhancerSettings(_UniffiConverterRustBuffer):
     @staticmethod
     def read(buf):
-        return AudioFilterSettings(
+        return EnhancerSettings(
             sample_rate=_UniffiFfiConverterUInt32.read(buf),
             num_channels=_UniffiFfiConverterUInt16.read(buf),
             samples_per_channel=_UniffiFfiConverterUInt32.read(buf),
-            credentials=_UniffiFfiConverterTypeAudioFilterCredentials.read(buf),
-            model=_UniffiFfiConverterTypeAudioFilterModel.read(buf),
+            credentials=_UniffiFfiConverterTypeCredentials.read(buf),
+            model=_UniffiFfiConverterTypeEnhancerModel.read(buf),
             vad=_UniffiFfiConverterTypeVadSettings.read(buf),
         )
 
@@ -1087,8 +1093,8 @@ class _UniffiFfiConverterTypeAudioFilterSettings(_UniffiConverterRustBuffer):
         _UniffiFfiConverterUInt32.check_lower(value.sample_rate)
         _UniffiFfiConverterUInt16.check_lower(value.num_channels)
         _UniffiFfiConverterUInt32.check_lower(value.samples_per_channel)
-        _UniffiFfiConverterTypeAudioFilterCredentials.check_lower(value.credentials)
-        _UniffiFfiConverterTypeAudioFilterModel.check_lower(value.model)
+        _UniffiFfiConverterTypeCredentials.check_lower(value.credentials)
+        _UniffiFfiConverterTypeEnhancerModel.check_lower(value.model)
         _UniffiFfiConverterTypeVadSettings.check_lower(value.vad)
 
     @staticmethod
@@ -1096,8 +1102,8 @@ class _UniffiFfiConverterTypeAudioFilterSettings(_UniffiConverterRustBuffer):
         _UniffiFfiConverterUInt32.write(value.sample_rate, buf)
         _UniffiFfiConverterUInt16.write(value.num_channels, buf)
         _UniffiFfiConverterUInt32.write(value.samples_per_channel, buf)
-        _UniffiFfiConverterTypeAudioFilterCredentials.write(value.credentials, buf)
-        _UniffiFfiConverterTypeAudioFilterModel.write(value.model, buf)
+        _UniffiFfiConverterTypeCredentials.write(value.credentials, buf)
+        _UniffiFfiConverterTypeEnhancerModel.write(value.model, buf)
         _UniffiFfiConverterTypeVadSettings.write(value.vad, buf)
 
 class _UniffiFfiConverterUInt64(_UniffiConverterPrimitiveInt):
@@ -1208,58 +1214,58 @@ class _UniffiFfiConverterTypeStreamInfo(_UniffiConverterRustBuffer):
 
 
 
-# AudioFilterError
+# EnhancerError
 # We want to define each variant as a nested class that's also a subclass,
 # which is tricky in Python.  To accomplish this we're going to create each
 # class separately, then manually add the child classes to the base class's
 # __dict__.  All of this happens in dummy class to avoid polluting the module
 # namespace.
-class AudioFilterError(Exception):
+class EnhancerError(Exception):
     pass
 
-_UniffiTempAudioFilterError = AudioFilterError
+_UniffiTempEnhancerError = EnhancerError
 
-class AudioFilterError:  # type: ignore
+class EnhancerError:  # type: ignore
     
-    class Model(_UniffiTempAudioFilterError):
+    class Model(_UniffiTempEnhancerError):
         def __repr__(self):
-            return "AudioFilterError.Model({})".format(repr(str(self)))
-    _UniffiTempAudioFilterError.Model = Model # type: ignore
-    class Authorization(_UniffiTempAudioFilterError):
+            return "EnhancerError.Model({})".format(repr(str(self)))
+    _UniffiTempEnhancerError.Model = Model # type: ignore
+    class Authorization(_UniffiTempEnhancerError):
         def __repr__(self):
-            return "AudioFilterError.Authorization({})".format(repr(str(self)))
-    _UniffiTempAudioFilterError.Authorization = Authorization # type: ignore
+            return "EnhancerError.Authorization({})".format(repr(str(self)))
+    _UniffiTempEnhancerError.Authorization = Authorization # type: ignore
 
-AudioFilterError = _UniffiTempAudioFilterError # type: ignore
-del _UniffiTempAudioFilterError
+EnhancerError = _UniffiTempEnhancerError # type: ignore
+del _UniffiTempEnhancerError
 
 
-class _UniffiFfiConverterTypeAudioFilterError(_UniffiConverterRustBuffer):
+class _UniffiFfiConverterTypeEnhancerError(_UniffiConverterRustBuffer):
     @staticmethod
     def read(buf):
         variant = buf.read_i32()
         if variant == 1:
-            return AudioFilterError.Model(
+            return EnhancerError.Model(
                 _UniffiFfiConverterString.read(buf),
             )
         if variant == 2:
-            return AudioFilterError.Authorization(
+            return EnhancerError.Authorization(
                 _UniffiFfiConverterString.read(buf),
             )
         raise InternalError("Raw enum value doesn't match any cases")
 
     @staticmethod
     def check_lower(value):
-        if isinstance(value, AudioFilterError.Model):
+        if isinstance(value, EnhancerError.Model):
             return
-        if isinstance(value, AudioFilterError.Authorization):
+        if isinstance(value, EnhancerError.Authorization):
             return
 
     @staticmethod
     def write(value, buf):
-        if isinstance(value, AudioFilterError.Model):
+        if isinstance(value, EnhancerError.Model):
             buf.write_i32(1)
-        if isinstance(value, AudioFilterError.Authorization):
+        if isinstance(value, EnhancerError.Authorization):
             buf.write_i32(2)
 
 class _UniffiFfiConverterSequenceTypeNativeAudioBufferMut(_UniffiConverterRustBuffer):
@@ -1307,7 +1313,10 @@ class _UniffiFfiConverterBoolean:
         buf.write_u8(value)
 
 
-class AudioFilterProtocol(typing.Protocol):
+class EnhancerProtocol(typing.Protocol):
+    """
+    Ai-coustics audio enhancer.
+"""
     
     def process(self, frame: NativeAudioBufferMut) -> None:
         """
@@ -1324,7 +1333,7 @@ class AudioFilterProtocol(typing.Protocol):
         Process an interleaved, 10ms frame. Returns vad information alongside the mutated frame.
 """
         raise NotImplementedError
-    def update_credentials(self, credentials: AudioFilterCredentials) -> None:
+    def update_credentials(self, credentials: Credentials) -> None:
         """
         Update credentials for model authorization.
 
@@ -1338,10 +1347,13 @@ class AudioFilterProtocol(typing.Protocol):
 """
         raise NotImplementedError
 
-class AudioFilter(AudioFilterProtocol):
+class Enhancer(EnhancerProtocol):
+    """
+    Ai-coustics audio enhancer.
+"""
     
     _handle: ctypes.c_uint64
-    def __init__(self, settings: AudioFilterSettings):
+    def __init__(self, settings: EnhancerSettings):
         """
         Creates a new audio filter with the provided settings.
 
@@ -1350,15 +1362,15 @@ class AudioFilter(AudioFilterProtocol):
 
 """
         
-        _UniffiFfiConverterTypeAudioFilterSettings.check_lower(settings)
+        _UniffiFfiConverterTypeEnhancerSettings.check_lower(settings)
         _uniffi_lowered_args = (
-            _UniffiFfiConverterTypeAudioFilterSettings.lower(settings),
+            _UniffiFfiConverterTypeEnhancerSettings.lower(settings),
         )
-        _uniffi_lift_return = _UniffiFfiConverterTypeAudioFilter.lift
-        _uniffi_error_converter = _UniffiFfiConverterTypeAudioFilterError
+        _uniffi_lift_return = _UniffiFfiConverterTypeEnhancer.lift
+        _uniffi_error_converter = _UniffiFfiConverterTypeEnhancerError
         _uniffi_ffi_result = _uniffi_rust_call_with_error(
             _uniffi_error_converter,
-            _UniffiLib.uniffi_audio_filter_uniffi_fn_constructor_audiofilter_new,
+            _UniffiLib.uniffi_plugins_ai_coustics_uniffi_fn_constructor_enhancer_new,
             *_uniffi_lowered_args,
         )
         self._handle = _uniffi_ffi_result
@@ -1367,10 +1379,10 @@ class AudioFilter(AudioFilterProtocol):
         # In case of partial initialization of instances.
         handle = getattr(self, "_handle", None)
         if handle is not None:
-            _uniffi_rust_call(_UniffiLib.uniffi_audio_filter_uniffi_fn_free_audiofilter, handle)
+            _uniffi_rust_call(_UniffiLib.uniffi_plugins_ai_coustics_uniffi_fn_free_enhancer, handle)
 
     def _uniffi_clone_handle(self):
-        return _uniffi_rust_call(_UniffiLib.uniffi_audio_filter_uniffi_fn_clone_audiofilter, self._handle)
+        return _uniffi_rust_call(_UniffiLib.uniffi_plugins_ai_coustics_uniffi_fn_clone_enhancer, self._handle)
 
     # Used by alternative constructors or any methods which return this type.
     @classmethod
@@ -1391,10 +1403,10 @@ class AudioFilter(AudioFilterProtocol):
             _UniffiFfiConverterTypeNativeAudioBufferMut.lower(frame),
         )
         _uniffi_lift_return = lambda val: None
-        _uniffi_error_converter = _UniffiFfiConverterTypeAudioFilterError
+        _uniffi_error_converter = _UniffiFfiConverterTypeEnhancerError
         _uniffi_ffi_result = _uniffi_rust_call_with_error(
             _uniffi_error_converter,
-            _UniffiLib.uniffi_audio_filter_uniffi_fn_method_audiofilter_process,
+            _UniffiLib.uniffi_plugins_ai_coustics_uniffi_fn_method_enhancer_process,
             *_uniffi_lowered_args,
         )
         return _uniffi_lift_return(_uniffi_ffi_result)
@@ -1409,10 +1421,10 @@ class AudioFilter(AudioFilterProtocol):
             _UniffiFfiConverterSequenceTypeNativeAudioBufferMut.lower(channels),
         )
         _uniffi_lift_return = lambda val: None
-        _uniffi_error_converter = _UniffiFfiConverterTypeAudioFilterError
+        _uniffi_error_converter = _UniffiFfiConverterTypeEnhancerError
         _uniffi_ffi_result = _uniffi_rust_call_with_error(
             _uniffi_error_converter,
-            _UniffiLib.uniffi_audio_filter_uniffi_fn_method_audiofilter_process_planar,
+            _UniffiLib.uniffi_plugins_ai_coustics_uniffi_fn_method_enhancer_process_planar,
             *_uniffi_lowered_args,
         )
         return _uniffi_lift_return(_uniffi_ffi_result)
@@ -1427,14 +1439,14 @@ class AudioFilter(AudioFilterProtocol):
             _UniffiFfiConverterTypeNativeAudioBufferMut.lower(frame),
         )
         _uniffi_lift_return = _UniffiFfiConverterBoolean.lift
-        _uniffi_error_converter = _UniffiFfiConverterTypeAudioFilterError
+        _uniffi_error_converter = _UniffiFfiConverterTypeEnhancerError
         _uniffi_ffi_result = _uniffi_rust_call_with_error(
             _uniffi_error_converter,
-            _UniffiLib.uniffi_audio_filter_uniffi_fn_method_audiofilter_process_with_vad,
+            _UniffiLib.uniffi_plugins_ai_coustics_uniffi_fn_method_enhancer_process_with_vad,
             *_uniffi_lowered_args,
         )
         return _uniffi_lift_return(_uniffi_ffi_result)
-    def update_credentials(self, credentials: AudioFilterCredentials) -> None:
+    def update_credentials(self, credentials: Credentials) -> None:
         """
         Update credentials for model authorization.
 
@@ -1442,16 +1454,16 @@ class AudioFilter(AudioFilterProtocol):
 
 """
         
-        _UniffiFfiConverterTypeAudioFilterCredentials.check_lower(credentials)
+        _UniffiFfiConverterTypeCredentials.check_lower(credentials)
         _uniffi_lowered_args = (
             self._uniffi_clone_handle(),
-            _UniffiFfiConverterTypeAudioFilterCredentials.lower(credentials),
+            _UniffiFfiConverterTypeCredentials.lower(credentials),
         )
         _uniffi_lift_return = lambda val: None
-        _uniffi_error_converter = _UniffiFfiConverterTypeAudioFilterError
+        _uniffi_error_converter = _UniffiFfiConverterTypeEnhancerError
         _uniffi_ffi_result = _uniffi_rust_call_with_error(
             _uniffi_error_converter,
-            _UniffiLib.uniffi_audio_filter_uniffi_fn_method_audiofilter_update_credentials,
+            _UniffiLib.uniffi_plugins_ai_coustics_uniffi_fn_method_enhancer_update_credentials,
             *_uniffi_lowered_args,
         )
         return _uniffi_lift_return(_uniffi_ffi_result)
@@ -1469,7 +1481,7 @@ class AudioFilter(AudioFilterProtocol):
         _uniffi_error_converter = None
         _uniffi_ffi_result = _uniffi_rust_call_with_error(
             _uniffi_error_converter,
-            _UniffiLib.uniffi_audio_filter_uniffi_fn_method_audiofilter_update_stream_info,
+            _UniffiLib.uniffi_plugins_ai_coustics_uniffi_fn_method_enhancer_update_stream_info,
             *_uniffi_lowered_args,
         )
         return _uniffi_lift_return(_uniffi_ffi_result)
@@ -1478,29 +1490,29 @@ class AudioFilter(AudioFilterProtocol):
 
 
 
-class _UniffiFfiConverterTypeAudioFilter:
+class _UniffiFfiConverterTypeEnhancer:
     @staticmethod
-    def lift(value: int) -> AudioFilter:
-        return AudioFilter._uniffi_make_instance(value)
+    def lift(value: int) -> Enhancer:
+        return Enhancer._uniffi_make_instance(value)
 
     @staticmethod
-    def check_lower(value: AudioFilter):
-        if not isinstance(value, AudioFilter):
-            raise TypeError("Expected AudioFilter instance, {} found".format(type(value).__name__))
+    def check_lower(value: Enhancer):
+        if not isinstance(value, Enhancer):
+            raise TypeError("Expected Enhancer instance, {} found".format(type(value).__name__))
 
     @staticmethod
-    def lower(value: AudioFilter) -> ctypes.c_uint64:
+    def lower(value: Enhancer) -> ctypes.c_uint64:
         return value._uniffi_clone_handle()
 
     @classmethod
-    def read(cls, buf: _UniffiRustBuffer) -> AudioFilter:
+    def read(cls, buf: _UniffiRustBuffer) -> Enhancer:
         ptr = buf.read_u64()
         if ptr == 0:
             raise InternalError("Raw handle value was null")
         return cls.lift(ptr)
 
     @classmethod
-    def write(cls, value: AudioFilter, buf: _UniffiRustBuffer):
+    def write(cls, value: Enhancer, buf: _UniffiRustBuffer):
         buf.write_u64(cls.lower(value))
 
 class _UniffiFfiConverterUInt8(_UniffiConverterPrimitiveInt):
@@ -1518,13 +1530,13 @@ class _UniffiFfiConverterUInt8(_UniffiConverterPrimitiveInt):
 
 __all__ = [
     "InternalError",
-    "AudioFilterModel",
-    "AudioFilterError",
-    "AudioFilterCredentials",
+    "EnhancerModel",
+    "EnhancerError",
+    "Credentials",
     "VadSettings",
-    "AudioFilterSettings",
+    "EnhancerSettings",
     "NativeAudioBufferMut",
     "StreamInfo",
-    "AudioFilter",
-    "AudioFilterProtocol",
+    "Enhancer",
+    "EnhancerProtocol",
 ]

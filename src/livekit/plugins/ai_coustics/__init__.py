@@ -2,15 +2,16 @@
 # Proprietary and confidential.
 
 from typing import Optional
-from .plugin import AICousticsAudioEnhancer, AudioFilterModel, VadSettings, FRAME_USERDATA_AIC_VAD_ATTRIBUTE
+from .plugin import AICousticsAudioEnhancer, EnhancerModel, VadSettings, FRAME_USERDATA_AIC_VAD_ATTRIBUTE
 
 
 def audio_enhancement(
     *,
-    model: AudioFilterModel = AudioFilterModel.QUAIL_L,
+    model: EnhancerModel = EnhancerModel.SPARROW_L,
     vad_settings: VadSettings = VadSettings(
-        lookback_buffer_size=None,
+        speech_hold_duration=None,
         sensitivity=None,
+        minimum_speech_duration=None,
     ),
 ):
     """
@@ -24,6 +25,6 @@ def audio_enhancement(
 __all__ = [
     "audio_enhancement",
     "FRAME_USERDATA_AIC_VAD_ATTRIBUTE",
-    "AudioFilterModel",
+    "EnhancerModel",
     "VadSettings",
 ]

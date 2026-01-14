@@ -2,13 +2,13 @@
 # Proprietary and confidential.
 
 from ._ffi import (
-    AudioFilter,
-    AudioFilterSettings,
-    AudioFilterError,
+    Enhancer,
+    EnhancerSettings,
+    EnhancerModel,
+    EnhancerError,
     StreamInfo,
+    Credentials,
     NativeAudioBufferMut,
-    AudioFilterCredentials,
-    AudioFilterModel,
     VadSettings,
 )
 from .log import logger
@@ -48,14 +48,14 @@ FRAME_USERDATA_AIC_VAD_ATTRIBUTE = "lk.aic-vad"
 
 class AICousticsAudioEnhancer(rtc.FrameProcessor[rtc.AudioFrame]):
 
-    def __init__(self, *, model: AudioFilterModel, vad_settings: VadSettings) -> None:
+    def __init__(self, *, model: EnhancerModel, vad_settings: VadSettings) -> None:
         self._model = model
         self._vad_settings = vad_settings
 
-        self._filter: AudioFilter | None = None
+        self._enhancer: Enhancer | None = None
         self._info: StreamInfo | None = None
-        self._credentials: AudioFilterCredentials | None = None
-        self._settings: AudioFilterSettings | None = None
+        self._credentials: Credentials | None = None
+        self._settings: EnhancerSettings | None = None
         self._enabled = True
 
     @property
@@ -76,13 +76,13 @@ class AICousticsAudioEnhancer(rtc.FrameProcessor[rtc.AudioFrame]):
             participant_id="",
             track_id=publication_sid,
         )
-        if self._filter is not None:
-            self._filter.update_stream_info(self._info)
+        if self._enhancer is not None:
+            self._enhancer.update_stream_info(self._info)
 
     def _on_credentials_updated(self, *, token: str, url: str):
-        self._credentials = AudioFilterCredentials(token=token, url=url)
-        if self._filter is not None:
-            self._filter.update_credentials(self._credentials)
+        self._credentials = Credentials(token=token, url=url)
+        if self._enhancer is not None:
+            self._enhancer.update_credentials(self._credentials)
 
     def _process(self, frame: rtc.AudioFrame) -> rtc.AudioFrame:
         """
@@ -98,9 +98,9 @@ class AICousticsAudioEnhancer(rtc.FrameProcessor[rtc.AudioFrame]):
             logger.error("Missing configuration")
             return frame
 
-        ## lazily create filter
-        if self._filter is None or (
-            ## implicitly recreate audio filter on sample rate or channel changes
+        ## lazily create enhancer
+        if self._enhancer is None or (
+            ## implicitly recreate audio enhancer on sample rate or channel changes
             self._settings is not None
             and (
                 self._settings.sample_rate != frame.sample_rate
@@ -108,7 +108,7 @@ class AICousticsAudioEnhancer(rtc.FrameProcessor[rtc.AudioFrame]):
                 or self._settings.samples_per_channel != frame.samples_per_channel
             )
         ):
-            self._settings = AudioFilterSettings(
+            self._settings = EnhancerSettings(
                 sample_rate=frame.sample_rate,
                 num_channels=frame.num_channels,
                 samples_per_channel=frame.samples_per_channel,
@@ -117,12 +117,12 @@ class AICousticsAudioEnhancer(rtc.FrameProcessor[rtc.AudioFrame]):
                 vad=self._vad_settings
             )
             try:
-                self._filter = AudioFilter(self._settings)
-            except AudioFilterError as e:
+                self._enhancer = Enhancer(self._settings)
+            except EnhancerError as e:
                 logger.error("Init failed: %s", e)
-                self._filter = None
+                self._enhancer = None
                 return frame
-            self._filter.update_stream_info(self._info)
+            self._enhancer.update_stream_info(self._info)
 
         # Convert frame.data to NativeAudioBufferMut (f32)
         # Keep samples alive during the process call
@@ -130,8 +130,8 @@ class AICousticsAudioEnhancer(rtc.FrameProcessor[rtc.AudioFrame]):
 
         # Process in-place (modifies samples array)
         try:
-            vad_data = self._filter.process_with_vad(native_buffer)
-        except AudioFilterError as e:
+            vad_data = self._enhancer.process_with_vad(native_buffer)
+        except EnhancerError as e:
             logger.error("Processing failed: %s", e)
             return frame
 
@@ -148,5 +148,5 @@ class AICousticsAudioEnhancer(rtc.FrameProcessor[rtc.AudioFrame]):
         return output_frame
 
     def _close(self):
-        if self._filter is not None:
-            self._filter = None
+        if self._enhancer is not None:
+            self._enhancer = None
