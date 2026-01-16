@@ -7,7 +7,7 @@ from .plugin import AICousticsAudioEnhancer, EnhancerModel, VadSettings, FRAME_U
 
 def audio_enhancement(
     *,
-    model: EnhancerModel = EnhancerModel.SPARROW_L,
+    model: EnhancerModel = EnhancerModel.QUAIL_L,
     vad_settings: VadSettings = VadSettings(
         speech_hold_duration=None,
         sensitivity=None,
