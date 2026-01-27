@@ -34,7 +34,12 @@ async def entrypoint(ctx: JobContext):
 
     # Configure RoomIO with AI-coustics noise cancellation
     room_io = RoomIO(
-        noise_cancellation=ai_coustics.audio_enhancement()
+        # Available enhancement models:
+        # - EnhancerModel.QUAIL_L      (default, best for voice enhancement)
+        # - EnhancerModel.QUAIL_STT_VOICE_FOCUS   (higher quality, extra cost)
+        noise_cancellation=ai_coustics.audio_enhancement(
+            model=EnhancerModel.QUAIL_L, # default, can be omitted
+        )
     )
 
     # Use the room_io for your agent tasks
