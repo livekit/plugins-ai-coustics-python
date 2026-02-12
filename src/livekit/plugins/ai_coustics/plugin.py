@@ -143,6 +143,7 @@ class AICousticsAudioEnhancer(rtc.FrameProcessor[rtc.AudioFrame]):
             sample_rate=frame.sample_rate,
             num_channels=frame.num_channels,
             samples_per_channel=frame.samples_per_channel,
+            userdata=frame.userdata,
         )
         output_frame.userdata[FRAME_USERDATA_AIC_VAD_ATTRIBUTE] = vad_data
         return output_frame
