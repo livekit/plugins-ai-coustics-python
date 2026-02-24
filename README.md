@@ -36,7 +36,7 @@ async def entrypoint(ctx: JobContext):
     room_io = RoomIO(
         # Available enhancement models:
         # - EnhancerModel.QUAIL_L      (default, best for voice enhancement)
-        # - EnhancerModel.QUAIL_STT_VOICE_FOCUS   (higher quality, extra cost)
+        # - EnhancerModel.QUAIL_VF_L   (higher quality, extra cost)
         noise_cancellation=ai_coustics.audio_enhancement(
             model=EnhancerModel.QUAIL_L, # default, can be omitted
         )
