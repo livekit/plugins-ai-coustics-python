@@ -1,8 +1,13 @@
 # Copyright © 2025 LiveKit, Inc. All rights reserved.
 # Proprietary and confidential.
 
-from typing import Optional
+from importlib.metadata import version
+
+from livekit.agents import Plugin
+
+from .log import logger
 from .plugin import AICousticsAudioEnhancer, EnhancerModel, VadSettings, FRAME_USERDATA_AIC_VAD_ATTRIBUTE
+from .vad import VAD
 
 
 def audio_enhancement(
@@ -22,9 +27,22 @@ def audio_enhancement(
     return AICousticsAudioEnhancer(model=model, vad_settings=vad_settings)
 
 
+class AICousticsPlugin(Plugin):
+    def __init__(self) -> None:
+        super().__init__(
+            __name__,
+            version("livekit-plugins-ai-coustics"),
+            __package__ or __name__,
+            logger,
+        )
+
+
+Plugin.register_plugin(AICousticsPlugin())
+
 __all__ = [
     "audio_enhancement",
     "FRAME_USERDATA_AIC_VAD_ATTRIBUTE",
     "EnhancerModel",
     "VadSettings",
+    "VAD",
 ]
