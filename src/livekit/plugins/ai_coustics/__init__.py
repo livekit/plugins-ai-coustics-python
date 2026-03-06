@@ -2,11 +2,12 @@
 # Proprietary and confidential.
 
 from importlib.metadata import version
+from typing import Dict, Optional
 
 from livekit.agents import Plugin
 
 from .log import logger
-from .plugin import AICousticsAudioEnhancer, EnhancerModel, VadSettings, FRAME_USERDATA_AIC_VAD_ATTRIBUTE
+from .plugin import AICousticsAudioEnhancer, EnhancerModel, ModelParameters, VadSettings, FRAME_USERDATA_AIC_VAD_ATTRIBUTE
 from .vad import VAD
 
 
@@ -18,13 +19,18 @@ def audio_enhancement(
         sensitivity=None,
         minimum_speech_duration=None,
     ),
+    model_parameters: Optional[ModelParameters] = None,
 ):
     """
     Implements a mechanism to apply [ai-coustics models](https://ai-coustics.com/) on audio data
     represented as `AudioFrame`s. In addition, each frame will be annotated with a
     FRAME_USERDATA_AIC_VAD_ATTRIBUTE `userdata` attribute containing the output of the aic vad model.
     """
-    return AICousticsAudioEnhancer(model=model, vad_settings=vad_settings)
+    return AICousticsAudioEnhancer(
+        model=model,
+        vad_settings=vad_settings,
+        model_parameters=model_parameters
+    )
 
 
 class AICousticsPlugin(Plugin):

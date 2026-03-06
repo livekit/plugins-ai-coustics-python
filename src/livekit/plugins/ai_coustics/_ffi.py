@@ -1005,6 +1005,42 @@ class _UniffiFfiConverterOptionalFloat32(_UniffiConverterRustBuffer):
             raise InternalError("Unexpected flag byte for optional type")
 
 @dataclass
+class ModelParameters:
+    def __init__(self, *, bypass:typing.Optional[float], enhancement_level:typing.Optional[float]):
+        self.bypass = bypass
+        self.enhancement_level = enhancement_level
+        
+        
+
+    
+    def __str__(self):
+        return "ModelParameters(bypass={}, enhancement_level={})".format(self.bypass, self.enhancement_level)
+    def __eq__(self, other):
+        if self.bypass != other.bypass:
+            return False
+        if self.enhancement_level != other.enhancement_level:
+            return False
+        return True
+
+class _UniffiFfiConverterTypeModelParameters(_UniffiConverterRustBuffer):
+    @staticmethod
+    def read(buf):
+        return ModelParameters(
+            bypass=_UniffiFfiConverterOptionalFloat32.read(buf),
+            enhancement_level=_UniffiFfiConverterOptionalFloat32.read(buf),
+        )
+
+    @staticmethod
+    def check_lower(value):
+        _UniffiFfiConverterOptionalFloat32.check_lower(value.bypass)
+        _UniffiFfiConverterOptionalFloat32.check_lower(value.enhancement_level)
+
+    @staticmethod
+    def write(value, buf):
+        _UniffiFfiConverterOptionalFloat32.write(value.bypass, buf)
+        _UniffiFfiConverterOptionalFloat32.write(value.enhancement_level, buf)
+
+@dataclass
 class VadSettings:
     def __init__(self, *, speech_hold_duration:typing.Optional[float], sensitivity:typing.Optional[float], minimum_speech_duration:typing.Optional[float]):
         self.speech_hold_duration = speech_hold_duration
@@ -1048,19 +1084,20 @@ class _UniffiFfiConverterTypeVadSettings(_UniffiConverterRustBuffer):
 
 @dataclass
 class EnhancerSettings:
-    def __init__(self, *, sample_rate:int, num_channels:int, samples_per_channel:int, credentials:Credentials, model:EnhancerModel, vad:VadSettings):
+    def __init__(self, *, sample_rate:int, num_channels:int, samples_per_channel:int, credentials:Credentials, model:EnhancerModel, model_parameters:ModelParameters, vad:VadSettings):
         self.sample_rate = sample_rate
         self.num_channels = num_channels
         self.samples_per_channel = samples_per_channel
         self.credentials = credentials
         self.model = model
+        self.model_parameters = model_parameters
         self.vad = vad
         
         
 
     
     def __str__(self):
-        return "EnhancerSettings(sample_rate={}, num_channels={}, samples_per_channel={}, credentials={}, model={}, vad={})".format(self.sample_rate, self.num_channels, self.samples_per_channel, self.credentials, self.model, self.vad)
+        return "EnhancerSettings(sample_rate={}, num_channels={}, samples_per_channel={}, credentials={}, model={}, model_parameters={}, vad={})".format(self.sample_rate, self.num_channels, self.samples_per_channel, self.credentials, self.model, self.model_parameters, self.vad)
     def __eq__(self, other):
         if self.sample_rate != other.sample_rate:
             return False
@@ -1071,6 +1108,8 @@ class EnhancerSettings:
         if self.credentials != other.credentials:
             return False
         if self.model != other.model:
+            return False
+        if self.model_parameters != other.model_parameters:
             return False
         if self.vad != other.vad:
             return False
@@ -1085,6 +1124,7 @@ class _UniffiFfiConverterTypeEnhancerSettings(_UniffiConverterRustBuffer):
             samples_per_channel=_UniffiFfiConverterUInt32.read(buf),
             credentials=_UniffiFfiConverterTypeCredentials.read(buf),
             model=_UniffiFfiConverterTypeEnhancerModel.read(buf),
+            model_parameters=_UniffiFfiConverterTypeModelParameters.read(buf),
             vad=_UniffiFfiConverterTypeVadSettings.read(buf),
         )
 
@@ -1095,6 +1135,7 @@ class _UniffiFfiConverterTypeEnhancerSettings(_UniffiConverterRustBuffer):
         _UniffiFfiConverterUInt32.check_lower(value.samples_per_channel)
         _UniffiFfiConverterTypeCredentials.check_lower(value.credentials)
         _UniffiFfiConverterTypeEnhancerModel.check_lower(value.model)
+        _UniffiFfiConverterTypeModelParameters.check_lower(value.model_parameters)
         _UniffiFfiConverterTypeVadSettings.check_lower(value.vad)
 
     @staticmethod
@@ -1104,6 +1145,7 @@ class _UniffiFfiConverterTypeEnhancerSettings(_UniffiConverterRustBuffer):
         _UniffiFfiConverterUInt32.write(value.samples_per_channel, buf)
         _UniffiFfiConverterTypeCredentials.write(value.credentials, buf)
         _UniffiFfiConverterTypeEnhancerModel.write(value.model, buf)
+        _UniffiFfiConverterTypeModelParameters.write(value.model_parameters, buf)
         _UniffiFfiConverterTypeVadSettings.write(value.vad, buf)
 
 class _UniffiFfiConverterUInt64(_UniffiConverterPrimitiveInt):
@@ -1533,6 +1575,7 @@ __all__ = [
     "EnhancerModel",
     "EnhancerError",
     "Credentials",
+    "ModelParameters",
     "VadSettings",
     "EnhancerSettings",
     "NativeAudioBufferMut",

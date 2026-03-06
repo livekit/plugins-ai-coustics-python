@@ -4,6 +4,7 @@
 from ._ffi import (
     Enhancer,
     EnhancerSettings,
+    ModelParameters as ModelParametersUniffi,
     EnhancerModel,
     EnhancerError,
     StreamInfo,
@@ -13,8 +14,20 @@ from ._ffi import (
 )
 from .log import logger
 from livekit import rtc
-from typing import Optional
+from typing import Dict, Optional
+from dataclasses import dataclass
 import numpy as np
+
+@dataclass
+class ModelParameters:
+    enhancement_level: Optional[float] = None
+    bypass: Optional[float] = None
+
+    def _to_uniffi(self):
+        return ModelParametersUniffi(
+            enhancement_level=self.enhancement_level,
+            bypass=self.bypass,
+        )
 
 
 def to_native_buffer(data: memoryview) -> tuple[np.ndarray, NativeAudioBufferMut]:
@@ -48,9 +61,16 @@ FRAME_USERDATA_AIC_VAD_ATTRIBUTE = "lk.aic-vad"
 
 class AICousticsAudioEnhancer(rtc.FrameProcessor[rtc.AudioFrame]):
 
-    def __init__(self, *, model: EnhancerModel, vad_settings: VadSettings) -> None:
+    def __init__(
+        self,
+        *,
+        model: EnhancerModel,
+        vad_settings: VadSettings,
+        model_parameters: Optional[ModelParameters] = None,
+    ) -> None:
         self._model = model
         self._vad_settings = vad_settings
+        self._model_parameters = model_parameters
 
         self._enhancer: Enhancer | None = None
         self._info: StreamInfo | None = None
@@ -114,6 +134,7 @@ class AICousticsAudioEnhancer(rtc.FrameProcessor[rtc.AudioFrame]):
                 samples_per_channel=frame.samples_per_channel,
                 credentials=self._credentials,
                 model=self._model,
+                model_parameters=self._model_parameters._to_uniffi() if self._model_parameters else ModelParametersUniffi(bypass=None, enhancement_level=None),
                 vad=self._vad_settings
             )
             try:
