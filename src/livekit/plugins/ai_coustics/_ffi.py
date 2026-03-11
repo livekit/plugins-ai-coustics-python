@@ -21,16 +21,12 @@ from dataclasses import dataclass
 import enum
 import struct
 import contextlib
-import datetime
 import threading
-import itertools
-import traceback
 import typing
-import platform
 
 
 # Used for default argument values
-_DEFAULT = object() # type: typing.Any
+_DEFAULT = object()  # type: typing.Any
 
 
 class _UniffiRustBuffer(ctypes.Structure):
@@ -46,20 +42,26 @@ class _UniffiRustBuffer(ctypes.Structure):
 
     @staticmethod
     def alloc(size):
-        return _uniffi_rust_call(_UniffiLib.ffi_plugins_ai_coustics_uniffi_rustbuffer_alloc, size)
+        return _uniffi_rust_call(
+            _UniffiLib.ffi_plugins_ai_coustics_uniffi_rustbuffer_alloc, size
+        )
 
     @staticmethod
     def reserve(rbuf, additional):
-        return _uniffi_rust_call(_UniffiLib.ffi_plugins_ai_coustics_uniffi_rustbuffer_reserve, rbuf, additional)
+        return _uniffi_rust_call(
+            _UniffiLib.ffi_plugins_ai_coustics_uniffi_rustbuffer_reserve,
+            rbuf,
+            additional,
+        )
 
     def free(self):
-        return _uniffi_rust_call(_UniffiLib.ffi_plugins_ai_coustics_uniffi_rustbuffer_free, self)
+        return _uniffi_rust_call(
+            _UniffiLib.ffi_plugins_ai_coustics_uniffi_rustbuffer_free, self
+        )
 
     def __str__(self):
         return "_UniffiRustBuffer(capacity={}, len={}, data={})".format(
-            self.capacity,
-            self.len,
-            self.data[0:self.len]
+            self.capacity, self.len, self.data[0 : self.len]
         )
 
     @contextlib.contextmanager
@@ -87,7 +89,9 @@ class _UniffiRustBuffer(ctypes.Structure):
             s = _UniffiRustBufferStream.from_rust_buffer(self)
             yield s
             if s.remaining() != 0:
-                raise RuntimeError(f"junk data left in buffer at end of consume_with_stream {s.remaining()}")
+                raise RuntimeError(
+                    f"junk data left in buffer at end of consume_with_stream {s.remaining()}"
+                )
         finally:
             self.free()
 
@@ -101,7 +105,10 @@ class _UniffiRustBuffer(ctypes.Structure):
         s = _UniffiRustBufferStream.from_rust_buffer(self)
         yield s
         if s.remaining() != 0:
-            raise RuntimeError(f"junk data left in buffer at end of read_with_stream {s.remaining()}")
+            raise RuntimeError(
+                f"junk data left in buffer at end of read_with_stream {s.remaining()}"
+            )
+
 
 class _UniffiForeignBytes(ctypes.Structure):
     _fields_ = [
@@ -110,7 +117,9 @@ class _UniffiForeignBytes(ctypes.Structure):
     ]
 
     def __str__(self):
-        return "_UniffiForeignBytes(len={}, data={})".format(self.len, self.data[0:self.len])
+        return "_UniffiForeignBytes(len={}, data={})".format(
+            self.len, self.data[0 : self.len]
+        )
 
 
 class _UniffiRustBufferStream:
@@ -133,14 +142,14 @@ class _UniffiRustBufferStream:
     def _unpack_from(self, size, format):
         if self.offset + size > self.len:
             raise InternalError("read past end of rust buffer")
-        value = struct.unpack(format, self.data[self.offset:self.offset+size])[0]
+        value = struct.unpack(format, self.data[self.offset : self.offset + size])[0]
         self.offset += size
         return value
 
     def read(self, size):
         if self.offset + size > self.len:
             raise InternalError("read past end of rust buffer")
-        data = self.data[self.offset:self.offset+size]
+        data = self.data[self.offset : self.offset + size]
         self.offset += size
         return data
 
@@ -174,6 +183,7 @@ class _UniffiRustBufferStream:
 
     def read_double(self):
         return self._unpack_from(8, ">d")
+
 
 class _UniffiRustBufferBuilder:
     """
@@ -243,17 +253,22 @@ class _UniffiRustBufferBuilder:
         self._pack_into(8, ">d", v)
 
     def write_c_size_t(self, v):
-        self._pack_into(ctypes.sizeof(ctypes.c_size_t) , "@N", v)
+        self._pack_into(ctypes.sizeof(ctypes.c_size_t), "@N", v)
+
+
 # A handful of classes and functions to support the generated data structures.
 # This would be a good candidate for isolating in its own ffi-support lib.
 
+
 class InternalError(Exception):
     pass
+
 
 class _UniffiRustCallStatus(ctypes.Structure):
     """
     Error runtime.
     """
+
     _fields_ = [
         ("code", ctypes.c_int8),
         ("error_buf", _UniffiRustBuffer),
@@ -266,7 +281,10 @@ class _UniffiRustCallStatus(ctypes.Structure):
 
     @staticmethod
     def default():
-        return _UniffiRustCallStatus(code=_UniffiRustCallStatus.CALL_SUCCESS, error_buf=_UniffiRustBuffer.default())
+        return _UniffiRustCallStatus(
+            code=_UniffiRustCallStatus.CALL_SUCCESS,
+            error_buf=_UniffiRustBuffer.default(),
+        )
 
     def __str__(self):
         if self.code == _UniffiRustCallStatus.CALL_SUCCESS:
@@ -278,9 +296,11 @@ class _UniffiRustCallStatus(ctypes.Structure):
         else:
             return "_UniffiRustCallStatus(<invalid code>)"
 
+
 def _uniffi_rust_call(fn, *args):
     # Call a rust function
     return _uniffi_rust_call_with_error(None, fn, *args)
+
 
 def _uniffi_rust_call_with_error(error_ffi_converter, fn, *args):
     # Call a rust function and handle any errors
@@ -294,13 +314,16 @@ def _uniffi_rust_call_with_error(error_ffi_converter, fn, *args):
     _uniffi_check_call_status(error_ffi_converter, call_status)
     return result
 
+
 def _uniffi_check_call_status(error_ffi_converter, call_status):
     if call_status.code == _UniffiRustCallStatus.CALL_SUCCESS:
         pass
     elif call_status.code == _UniffiRustCallStatus.CALL_ERROR:
         if error_ffi_converter is None:
             call_status.error_buf.free()
-            raise InternalError("_uniffi_rust_call_with_error: CALL_ERROR, but error_ffi_converter is None")
+            raise InternalError(
+                "_uniffi_rust_call_with_error: CALL_ERROR, but error_ffi_converter is None"
+            )
         else:
             raise error_ffi_converter.lift(call_status.error_buf)
     elif call_status.code == _UniffiRustCallStatus.CALL_UNEXPECTED_ERROR:
@@ -313,8 +336,10 @@ def _uniffi_check_call_status(error_ffi_converter, call_status):
             msg = "Unknown rust panic"
         raise InternalError(msg)
     else:
-        raise InternalError("Invalid _UniffiRustCallStatus code: {}".format(
-            call_status.code))
+        raise InternalError(
+            "Invalid _UniffiRustCallStatus code: {}".format(call_status.code)
+        )
+
 
 def _uniffi_trait_interface_call(call_status, make_call, write_return_value):
     try:
@@ -323,7 +348,10 @@ def _uniffi_trait_interface_call(call_status, make_call, write_return_value):
         call_status.code = _UniffiRustCallStatus.CALL_UNEXPECTED_ERROR
         call_status.error_buf = _UniffiFfiConverterString.lower(repr(e))
 
-def _uniffi_trait_interface_call_with_error(call_status, make_call, write_return_value, error_type, lower_error):
+
+def _uniffi_trait_interface_call_with_error(
+    call_status, make_call, write_return_value, error_type, lower_error
+):
     try:
         try:
             return write_return_value(make_call())
@@ -333,10 +361,13 @@ def _uniffi_trait_interface_call_with_error(call_status, make_call, write_return
     except Exception as e:
         call_status.code = _UniffiRustCallStatus.CALL_UNEXPECTED_ERROR
         call_status.error_buf = _UniffiFfiConverterString.lower(repr(e))
-# Initial value and increment amount for handles. 
+
+
+# Initial value and increment amount for handles.
 # These ensure that Python-generated handles always have the lowest bit set
 _UNIFFI_HANDLEMAP_INITIAL = 1
 _UNIFFI_HANDLEMAP_DELTA = 2
+
 
 class _UniffiHandleMap:
     """
@@ -354,6 +385,7 @@ class _UniffiHandleMap:
             return self._insert(obj)
 
     """Low-level insert, this assumes `self._lock` is held."""
+
     def _insert(self, obj):
         handle = self._counter
         self._counter += _UNIFFI_HANDLEMAP_DELTA
@@ -384,6 +416,8 @@ class _UniffiHandleMap:
 
     def __len__(self):
         return len(self._map)
+
+
 # Types conforming to `_UniffiConverterPrimitive` pass themselves directly over the FFI.
 class _UniffiConverterPrimitive:
     @classmethod
@@ -394,17 +428,29 @@ class _UniffiConverterPrimitive:
     def lower(cls, value):
         return value
 
+
 class _UniffiConverterPrimitiveInt(_UniffiConverterPrimitive):
     @classmethod
     def check_lower(cls, value):
         try:
             value = value.__index__()
         except Exception:
-            raise TypeError("'{}' object cannot be interpreted as an integer".format(type(value).__name__))
+            raise TypeError(
+                "'{}' object cannot be interpreted as an integer".format(
+                    type(value).__name__
+                )
+            )
         if not isinstance(value, int):
-            raise TypeError("__index__ returned non-int (type {})".format(type(value).__name__))
+            raise TypeError(
+                "__index__ returned non-int (type {})".format(type(value).__name__)
+            )
         if not cls.VALUE_MIN <= value < cls.VALUE_MAX:
-            raise ValueError("{} requires {} <= value < {}".format(cls.CLASS_NAME, cls.VALUE_MIN, cls.VALUE_MAX))
+            raise ValueError(
+                "{} requires {} <= value < {}".format(
+                    cls.CLASS_NAME, cls.VALUE_MIN, cls.VALUE_MAX
+                )
+            )
+
 
 class _UniffiConverterPrimitiveFloat(_UniffiConverterPrimitive):
     @classmethod
@@ -414,7 +460,10 @@ class _UniffiConverterPrimitiveFloat(_UniffiConverterPrimitive):
         except Exception:
             raise TypeError("must be real number, not {}".format(type(value).__name__))
         if not isinstance(value, float):
-            raise TypeError("__float__ returned non-float (type {})".format(type(value).__name__))
+            raise TypeError(
+                "__float__ returned non-float (type {})".format(type(value).__name__)
+            )
+
 
 # Helper class for wrapper types that will always go through a _UniffiRustBuffer.
 # Classes should inherit from this and implement the `read` and `write` static methods.
@@ -430,6 +479,7 @@ class _UniffiConverterRustBuffer:
             cls.write(value, builder)
             return builder.finalize()
 
+
 # Contains loading, initialization code, and the FFI Function declarations.
 # Define some ctypes FFI types that we use in the library
 
@@ -438,11 +488,13 @@ Function pointer for a Rust task, which a callback function that takes a opaque 
 """
 _UNIFFI_RUST_TASK = ctypes.CFUNCTYPE(None, ctypes.c_void_p, ctypes.c_int8)
 
+
 def _uniffi_future_callback_t(return_type):
     """
     Factory function to create callback function types for async functions
     """
     return ctypes.CFUNCTYPE(None, ctypes.c_uint64, return_type, _UniffiRustCallStatus)
+
 
 def _uniffi_load_indirect():
     """
@@ -469,27 +521,58 @@ def _uniffi_load_indirect():
     lib = ctypes.cdll.LoadLibrary(path)
     return lib
 
+
 def _uniffi_check_contract_api_version(lib):
     # Get the bindings contract version from our ComponentInterface
     bindings_contract_version = 30
     # Get the scaffolding contract version by calling the into the dylib
-    scaffolding_contract_version = lib.ffi_plugins_ai_coustics_uniffi_uniffi_contract_version()
+    scaffolding_contract_version = (
+        lib.ffi_plugins_ai_coustics_uniffi_uniffi_contract_version()
+    )
     if bindings_contract_version != scaffolding_contract_version:
-        raise InternalError("UniFFI contract version mismatch: try cleaning and rebuilding your project")
+        raise InternalError(
+            "UniFFI contract version mismatch: try cleaning and rebuilding your project"
+        )
+
 
 def _uniffi_check_api_checksums(lib):
     if lib.uniffi_plugins_ai_coustics_uniffi_checksum_constructor_enhancer_new() != 685:
-        raise InternalError("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
+        raise InternalError(
+            "UniFFI API checksum mismatch: try cleaning and rebuilding your project"
+        )
     if lib.uniffi_plugins_ai_coustics_uniffi_checksum_method_enhancer_process() != 9700:
-        raise InternalError("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
-    if lib.uniffi_plugins_ai_coustics_uniffi_checksum_method_enhancer_process_planar() != 34627:
-        raise InternalError("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
-    if lib.uniffi_plugins_ai_coustics_uniffi_checksum_method_enhancer_process_with_vad() != 36609:
-        raise InternalError("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
-    if lib.uniffi_plugins_ai_coustics_uniffi_checksum_method_enhancer_update_credentials() != 20156:
-        raise InternalError("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
-    if lib.uniffi_plugins_ai_coustics_uniffi_checksum_method_enhancer_update_stream_info() != 15469:
-        raise InternalError("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
+        raise InternalError(
+            "UniFFI API checksum mismatch: try cleaning and rebuilding your project"
+        )
+    if (
+        lib.uniffi_plugins_ai_coustics_uniffi_checksum_method_enhancer_process_planar()
+        != 34627
+    ):
+        raise InternalError(
+            "UniFFI API checksum mismatch: try cleaning and rebuilding your project"
+        )
+    if (
+        lib.uniffi_plugins_ai_coustics_uniffi_checksum_method_enhancer_process_with_vad()
+        != 36609
+    ):
+        raise InternalError(
+            "UniFFI API checksum mismatch: try cleaning and rebuilding your project"
+        )
+    if (
+        lib.uniffi_plugins_ai_coustics_uniffi_checksum_method_enhancer_update_credentials()
+        != 20156
+    ):
+        raise InternalError(
+            "UniFFI API checksum mismatch: try cleaning and rebuilding your project"
+        )
+    if (
+        lib.uniffi_plugins_ai_coustics_uniffi_checksum_method_enhancer_update_stream_info()
+        != 15469
+    ):
+        raise InternalError(
+            "UniFFI API checksum mismatch: try cleaning and rebuilding your project"
+        )
+
 
 # A ctypes library to expose the extern-C FFI definitions.
 # This is an implementation detail which will be called internally by the public API.
@@ -504,7 +587,9 @@ _UniffiLib.ffi_plugins_ai_coustics_uniffi_rustbuffer_from_bytes.argtypes = (
     _UniffiForeignBytes,
     ctypes.POINTER(_UniffiRustCallStatus),
 )
-_UniffiLib.ffi_plugins_ai_coustics_uniffi_rustbuffer_from_bytes.restype = _UniffiRustBuffer
+_UniffiLib.ffi_plugins_ai_coustics_uniffi_rustbuffer_from_bytes.restype = (
+    _UniffiRustBuffer
+)
 _UniffiLib.ffi_plugins_ai_coustics_uniffi_rustbuffer_free.argtypes = (
     _UniffiRustBuffer,
     ctypes.POINTER(_UniffiRustCallStatus),
@@ -516,15 +601,24 @@ _UniffiLib.ffi_plugins_ai_coustics_uniffi_rustbuffer_reserve.argtypes = (
     ctypes.POINTER(_UniffiRustCallStatus),
 )
 _UniffiLib.ffi_plugins_ai_coustics_uniffi_rustbuffer_reserve.restype = _UniffiRustBuffer
-_UNIFFI_RUST_FUTURE_CONTINUATION_CALLBACK = ctypes.CFUNCTYPE(None,ctypes.c_uint64,ctypes.c_int8,
+_UNIFFI_RUST_FUTURE_CONTINUATION_CALLBACK = ctypes.CFUNCTYPE(
+    None,
+    ctypes.c_uint64,
+    ctypes.c_int8,
 )
-_UNIFFI_FOREIGN_FUTURE_DROPPED_CALLBACK = ctypes.CFUNCTYPE(None,ctypes.c_uint64,
+_UNIFFI_FOREIGN_FUTURE_DROPPED_CALLBACK = ctypes.CFUNCTYPE(
+    None,
+    ctypes.c_uint64,
 )
+
+
 class _UniffiForeignFutureDroppedCallbackStruct(ctypes.Structure):
     _fields_ = [
         ("handle", ctypes.c_uint64),
         ("free", _UNIFFI_FOREIGN_FUTURE_DROPPED_CALLBACK),
     ]
+
+
 _UniffiLib.ffi_plugins_ai_coustics_uniffi_rust_future_poll_u8.argtypes = (
     ctypes.c_uint64,
     _UNIFFI_RUST_FUTURE_CONTINUATION_CALLBACK,
@@ -539,7 +633,9 @@ _UniffiLib.ffi_plugins_ai_coustics_uniffi_rust_future_complete_u8.argtypes = (
     ctypes.c_uint64,
     ctypes.POINTER(_UniffiRustCallStatus),
 )
-_UniffiLib.ffi_plugins_ai_coustics_uniffi_rust_future_complete_u8.restype = ctypes.c_uint8
+_UniffiLib.ffi_plugins_ai_coustics_uniffi_rust_future_complete_u8.restype = (
+    ctypes.c_uint8
+)
 _UniffiLib.ffi_plugins_ai_coustics_uniffi_rust_future_free_u8.argtypes = (
     ctypes.c_uint64,
 )
@@ -558,7 +654,9 @@ _UniffiLib.ffi_plugins_ai_coustics_uniffi_rust_future_complete_i8.argtypes = (
     ctypes.c_uint64,
     ctypes.POINTER(_UniffiRustCallStatus),
 )
-_UniffiLib.ffi_plugins_ai_coustics_uniffi_rust_future_complete_i8.restype = ctypes.c_int8
+_UniffiLib.ffi_plugins_ai_coustics_uniffi_rust_future_complete_i8.restype = (
+    ctypes.c_int8
+)
 _UniffiLib.ffi_plugins_ai_coustics_uniffi_rust_future_free_i8.argtypes = (
     ctypes.c_uint64,
 )
@@ -577,7 +675,9 @@ _UniffiLib.ffi_plugins_ai_coustics_uniffi_rust_future_complete_u16.argtypes = (
     ctypes.c_uint64,
     ctypes.POINTER(_UniffiRustCallStatus),
 )
-_UniffiLib.ffi_plugins_ai_coustics_uniffi_rust_future_complete_u16.restype = ctypes.c_uint16
+_UniffiLib.ffi_plugins_ai_coustics_uniffi_rust_future_complete_u16.restype = (
+    ctypes.c_uint16
+)
 _UniffiLib.ffi_plugins_ai_coustics_uniffi_rust_future_free_u16.argtypes = (
     ctypes.c_uint64,
 )
@@ -596,7 +696,9 @@ _UniffiLib.ffi_plugins_ai_coustics_uniffi_rust_future_complete_i16.argtypes = (
     ctypes.c_uint64,
     ctypes.POINTER(_UniffiRustCallStatus),
 )
-_UniffiLib.ffi_plugins_ai_coustics_uniffi_rust_future_complete_i16.restype = ctypes.c_int16
+_UniffiLib.ffi_plugins_ai_coustics_uniffi_rust_future_complete_i16.restype = (
+    ctypes.c_int16
+)
 _UniffiLib.ffi_plugins_ai_coustics_uniffi_rust_future_free_i16.argtypes = (
     ctypes.c_uint64,
 )
@@ -615,7 +717,9 @@ _UniffiLib.ffi_plugins_ai_coustics_uniffi_rust_future_complete_u32.argtypes = (
     ctypes.c_uint64,
     ctypes.POINTER(_UniffiRustCallStatus),
 )
-_UniffiLib.ffi_plugins_ai_coustics_uniffi_rust_future_complete_u32.restype = ctypes.c_uint32
+_UniffiLib.ffi_plugins_ai_coustics_uniffi_rust_future_complete_u32.restype = (
+    ctypes.c_uint32
+)
 _UniffiLib.ffi_plugins_ai_coustics_uniffi_rust_future_free_u32.argtypes = (
     ctypes.c_uint64,
 )
@@ -634,7 +738,9 @@ _UniffiLib.ffi_plugins_ai_coustics_uniffi_rust_future_complete_i32.argtypes = (
     ctypes.c_uint64,
     ctypes.POINTER(_UniffiRustCallStatus),
 )
-_UniffiLib.ffi_plugins_ai_coustics_uniffi_rust_future_complete_i32.restype = ctypes.c_int32
+_UniffiLib.ffi_plugins_ai_coustics_uniffi_rust_future_complete_i32.restype = (
+    ctypes.c_int32
+)
 _UniffiLib.ffi_plugins_ai_coustics_uniffi_rust_future_free_i32.argtypes = (
     ctypes.c_uint64,
 )
@@ -653,7 +759,9 @@ _UniffiLib.ffi_plugins_ai_coustics_uniffi_rust_future_complete_u64.argtypes = (
     ctypes.c_uint64,
     ctypes.POINTER(_UniffiRustCallStatus),
 )
-_UniffiLib.ffi_plugins_ai_coustics_uniffi_rust_future_complete_u64.restype = ctypes.c_uint64
+_UniffiLib.ffi_plugins_ai_coustics_uniffi_rust_future_complete_u64.restype = (
+    ctypes.c_uint64
+)
 _UniffiLib.ffi_plugins_ai_coustics_uniffi_rust_future_free_u64.argtypes = (
     ctypes.c_uint64,
 )
@@ -672,7 +780,9 @@ _UniffiLib.ffi_plugins_ai_coustics_uniffi_rust_future_complete_i64.argtypes = (
     ctypes.c_uint64,
     ctypes.POINTER(_UniffiRustCallStatus),
 )
-_UniffiLib.ffi_plugins_ai_coustics_uniffi_rust_future_complete_i64.restype = ctypes.c_int64
+_UniffiLib.ffi_plugins_ai_coustics_uniffi_rust_future_complete_i64.restype = (
+    ctypes.c_int64
+)
 _UniffiLib.ffi_plugins_ai_coustics_uniffi_rust_future_free_i64.argtypes = (
     ctypes.c_uint64,
 )
@@ -691,7 +801,9 @@ _UniffiLib.ffi_plugins_ai_coustics_uniffi_rust_future_complete_f32.argtypes = (
     ctypes.c_uint64,
     ctypes.POINTER(_UniffiRustCallStatus),
 )
-_UniffiLib.ffi_plugins_ai_coustics_uniffi_rust_future_complete_f32.restype = ctypes.c_float
+_UniffiLib.ffi_plugins_ai_coustics_uniffi_rust_future_complete_f32.restype = (
+    ctypes.c_float
+)
 _UniffiLib.ffi_plugins_ai_coustics_uniffi_rust_future_free_f32.argtypes = (
     ctypes.c_uint64,
 )
@@ -710,7 +822,9 @@ _UniffiLib.ffi_plugins_ai_coustics_uniffi_rust_future_complete_f64.argtypes = (
     ctypes.c_uint64,
     ctypes.POINTER(_UniffiRustCallStatus),
 )
-_UniffiLib.ffi_plugins_ai_coustics_uniffi_rust_future_complete_f64.restype = ctypes.c_double
+_UniffiLib.ffi_plugins_ai_coustics_uniffi_rust_future_complete_f64.restype = (
+    ctypes.c_double
+)
 _UniffiLib.ffi_plugins_ai_coustics_uniffi_rust_future_free_f64.argtypes = (
     ctypes.c_uint64,
 )
@@ -729,7 +843,9 @@ _UniffiLib.ffi_plugins_ai_coustics_uniffi_rust_future_complete_rust_buffer.argty
     ctypes.c_uint64,
     ctypes.POINTER(_UniffiRustCallStatus),
 )
-_UniffiLib.ffi_plugins_ai_coustics_uniffi_rust_future_complete_rust_buffer.restype = _UniffiRustBuffer
+_UniffiLib.ffi_plugins_ai_coustics_uniffi_rust_future_complete_rust_buffer.restype = (
+    _UniffiRustBuffer
+)
 _UniffiLib.ffi_plugins_ai_coustics_uniffi_rust_future_free_rust_buffer.argtypes = (
     ctypes.c_uint64,
 )
@@ -767,7 +883,9 @@ _UniffiLib.uniffi_plugins_ai_coustics_uniffi_fn_constructor_enhancer_new.argtype
     _UniffiRustBuffer,
     ctypes.POINTER(_UniffiRustCallStatus),
 )
-_UniffiLib.uniffi_plugins_ai_coustics_uniffi_fn_constructor_enhancer_new.restype = ctypes.c_uint64
+_UniffiLib.uniffi_plugins_ai_coustics_uniffi_fn_constructor_enhancer_new.restype = (
+    ctypes.c_uint64
+)
 _UniffiLib.uniffi_plugins_ai_coustics_uniffi_fn_method_enhancer_process.argtypes = (
     ctypes.c_uint64,
     _UniffiRustBuffer,
@@ -798,31 +916,25 @@ _UniffiLib.uniffi_plugins_ai_coustics_uniffi_fn_method_enhancer_update_stream_in
     ctypes.POINTER(_UniffiRustCallStatus),
 )
 _UniffiLib.uniffi_plugins_ai_coustics_uniffi_fn_method_enhancer_update_stream_info.restype = None
-_UniffiLib.ffi_plugins_ai_coustics_uniffi_uniffi_contract_version.argtypes = (
+_UniffiLib.ffi_plugins_ai_coustics_uniffi_uniffi_contract_version.argtypes = ()
+_UniffiLib.ffi_plugins_ai_coustics_uniffi_uniffi_contract_version.restype = (
+    ctypes.c_uint32
 )
-_UniffiLib.ffi_plugins_ai_coustics_uniffi_uniffi_contract_version.restype = ctypes.c_uint32
-_UniffiLib.uniffi_plugins_ai_coustics_uniffi_checksum_constructor_enhancer_new.argtypes = (
-)
+_UniffiLib.uniffi_plugins_ai_coustics_uniffi_checksum_constructor_enhancer_new.argtypes = ()
 _UniffiLib.uniffi_plugins_ai_coustics_uniffi_checksum_constructor_enhancer_new.restype = ctypes.c_uint16
-_UniffiLib.uniffi_plugins_ai_coustics_uniffi_checksum_method_enhancer_process.argtypes = (
-)
+_UniffiLib.uniffi_plugins_ai_coustics_uniffi_checksum_method_enhancer_process.argtypes = ()
 _UniffiLib.uniffi_plugins_ai_coustics_uniffi_checksum_method_enhancer_process.restype = ctypes.c_uint16
-_UniffiLib.uniffi_plugins_ai_coustics_uniffi_checksum_method_enhancer_process_planar.argtypes = (
-)
+_UniffiLib.uniffi_plugins_ai_coustics_uniffi_checksum_method_enhancer_process_planar.argtypes = ()
 _UniffiLib.uniffi_plugins_ai_coustics_uniffi_checksum_method_enhancer_process_planar.restype = ctypes.c_uint16
-_UniffiLib.uniffi_plugins_ai_coustics_uniffi_checksum_method_enhancer_process_with_vad.argtypes = (
-)
+_UniffiLib.uniffi_plugins_ai_coustics_uniffi_checksum_method_enhancer_process_with_vad.argtypes = ()
 _UniffiLib.uniffi_plugins_ai_coustics_uniffi_checksum_method_enhancer_process_with_vad.restype = ctypes.c_uint16
-_UniffiLib.uniffi_plugins_ai_coustics_uniffi_checksum_method_enhancer_update_credentials.argtypes = (
-)
+_UniffiLib.uniffi_plugins_ai_coustics_uniffi_checksum_method_enhancer_update_credentials.argtypes = ()
 _UniffiLib.uniffi_plugins_ai_coustics_uniffi_checksum_method_enhancer_update_credentials.restype = ctypes.c_uint16
-_UniffiLib.uniffi_plugins_ai_coustics_uniffi_checksum_method_enhancer_update_stream_info.argtypes = (
-)
+_UniffiLib.uniffi_plugins_ai_coustics_uniffi_checksum_method_enhancer_update_stream_info.argtypes = ()
 _UniffiLib.uniffi_plugins_ai_coustics_uniffi_checksum_method_enhancer_update_stream_info.restype = ctypes.c_uint16
 
 _uniffi_check_contract_api_version(_UniffiLib)
 # _uniffi_check_api_checksums(_UniffiLib)
-
 
 
 # Public interface members begin here.
@@ -860,23 +972,23 @@ class _UniffiFfiConverterString:
             builder.write(value.encode("utf-8"))
             return builder.finalize()
 
+
 @dataclass
 class Credentials:
-    def __init__(self, *, url:str, token:str):
+    def __init__(self, *, url: str, token: str):
         self.url = url
         self.token = token
-        
-        
 
-    
     def __str__(self):
         return "Credentials(url={}, token={})".format(self.url, self.token)
+
     def __eq__(self, other):
         if self.url != other.url:
             return False
         if self.token != other.token:
             return False
         return True
+
 
 class _UniffiFfiConverterTypeCredentials(_UniffiConverterRustBuffer):
     @staticmethod
@@ -896,6 +1008,7 @@ class _UniffiFfiConverterTypeCredentials(_UniffiConverterRustBuffer):
         _UniffiFfiConverterString.write(value.url, buf)
         _UniffiFfiConverterString.write(value.token, buf)
 
+
 class _UniffiFfiConverterUInt32(_UniffiConverterPrimitiveInt):
     CLASS_NAME = "u32"
     VALUE_MIN = 0
@@ -908,6 +1021,7 @@ class _UniffiFfiConverterUInt32(_UniffiConverterPrimitiveInt):
     @staticmethod
     def write(value, buf):
         buf.write_u32(value)
+
 
 class _UniffiFfiConverterUInt16(_UniffiConverterPrimitiveInt):
     CLASS_NAME = "u16"
@@ -923,18 +1037,12 @@ class _UniffiFfiConverterUInt16(_UniffiConverterPrimitiveInt):
         buf.write_u16(value)
 
 
-
-
-
-
 class EnhancerModel(enum.Enum):
-    
     QUAIL_L = 0
-    
+
     QUAIL_VF_L = 1
-    
+
     SPARROW_S = 2
-    
 
 
 class _UniffiFfiConverterTypeEnhancerModel(_UniffiConverterRustBuffer):
@@ -969,7 +1077,6 @@ class _UniffiFfiConverterTypeEnhancerModel(_UniffiConverterRustBuffer):
             buf.write_i32(3)
 
 
-
 class _UniffiFfiConverterFloat32(_UniffiConverterPrimitiveFloat):
     @staticmethod
     def read(buf):
@@ -978,6 +1085,7 @@ class _UniffiFfiConverterFloat32(_UniffiConverterPrimitiveFloat):
     @staticmethod
     def write(value, buf):
         buf.write_float(value)
+
 
 class _UniffiFfiConverterOptionalFloat32(_UniffiConverterRustBuffer):
     @classmethod
@@ -1004,23 +1112,30 @@ class _UniffiFfiConverterOptionalFloat32(_UniffiConverterRustBuffer):
         else:
             raise InternalError("Unexpected flag byte for optional type")
 
+
 @dataclass
 class ModelParameters:
-    def __init__(self, *, bypass:typing.Optional[float], enhancement_level:typing.Optional[float]):
+    def __init__(
+        self,
+        *,
+        bypass: typing.Optional[float],
+        enhancement_level: typing.Optional[float],
+    ):
         self.bypass = bypass
         self.enhancement_level = enhancement_level
-        
-        
 
-    
     def __str__(self):
-        return "ModelParameters(bypass={}, enhancement_level={})".format(self.bypass, self.enhancement_level)
+        return "ModelParameters(bypass={}, enhancement_level={})".format(
+            self.bypass, self.enhancement_level
+        )
+
     def __eq__(self, other):
         if self.bypass != other.bypass:
             return False
         if self.enhancement_level != other.enhancement_level:
             return False
         return True
+
 
 class _UniffiFfiConverterTypeModelParameters(_UniffiConverterRustBuffer):
     @staticmethod
@@ -1040,18 +1155,25 @@ class _UniffiFfiConverterTypeModelParameters(_UniffiConverterRustBuffer):
         _UniffiFfiConverterOptionalFloat32.write(value.bypass, buf)
         _UniffiFfiConverterOptionalFloat32.write(value.enhancement_level, buf)
 
+
 @dataclass
 class VadSettings:
-    def __init__(self, *, speech_hold_duration:typing.Optional[float], sensitivity:typing.Optional[float], minimum_speech_duration:typing.Optional[float]):
+    def __init__(
+        self,
+        *,
+        speech_hold_duration: typing.Optional[float],
+        sensitivity: typing.Optional[float],
+        minimum_speech_duration: typing.Optional[float],
+    ):
         self.speech_hold_duration = speech_hold_duration
         self.sensitivity = sensitivity
         self.minimum_speech_duration = minimum_speech_duration
-        
-        
 
-    
     def __str__(self):
-        return "VadSettings(speech_hold_duration={}, sensitivity={}, minimum_speech_duration={})".format(self.speech_hold_duration, self.sensitivity, self.minimum_speech_duration)
+        return "VadSettings(speech_hold_duration={}, sensitivity={}, minimum_speech_duration={})".format(
+            self.speech_hold_duration, self.sensitivity, self.minimum_speech_duration
+        )
+
     def __eq__(self, other):
         if self.speech_hold_duration != other.speech_hold_duration:
             return False
@@ -1060,6 +1182,7 @@ class VadSettings:
         if self.minimum_speech_duration != other.minimum_speech_duration:
             return False
         return True
+
 
 class _UniffiFfiConverterTypeVadSettings(_UniffiConverterRustBuffer):
     @staticmethod
@@ -1082,9 +1205,20 @@ class _UniffiFfiConverterTypeVadSettings(_UniffiConverterRustBuffer):
         _UniffiFfiConverterOptionalFloat32.write(value.sensitivity, buf)
         _UniffiFfiConverterOptionalFloat32.write(value.minimum_speech_duration, buf)
 
+
 @dataclass
 class EnhancerSettings:
-    def __init__(self, *, sample_rate:int, num_channels:int, samples_per_channel:int, credentials:Credentials, model:EnhancerModel, model_parameters:ModelParameters, vad:VadSettings):
+    def __init__(
+        self,
+        *,
+        sample_rate: int,
+        num_channels: int,
+        samples_per_channel: int,
+        credentials: Credentials,
+        model: EnhancerModel,
+        model_parameters: ModelParameters,
+        vad: VadSettings,
+    ):
         self.sample_rate = sample_rate
         self.num_channels = num_channels
         self.samples_per_channel = samples_per_channel
@@ -1092,12 +1226,18 @@ class EnhancerSettings:
         self.model = model
         self.model_parameters = model_parameters
         self.vad = vad
-        
-        
 
-    
     def __str__(self):
-        return "EnhancerSettings(sample_rate={}, num_channels={}, samples_per_channel={}, credentials={}, model={}, model_parameters={}, vad={})".format(self.sample_rate, self.num_channels, self.samples_per_channel, self.credentials, self.model, self.model_parameters, self.vad)
+        return "EnhancerSettings(sample_rate={}, num_channels={}, samples_per_channel={}, credentials={}, model={}, model_parameters={}, vad={})".format(
+            self.sample_rate,
+            self.num_channels,
+            self.samples_per_channel,
+            self.credentials,
+            self.model,
+            self.model_parameters,
+            self.vad,
+        )
+
     def __eq__(self, other):
         if self.sample_rate != other.sample_rate:
             return False
@@ -1114,6 +1254,7 @@ class EnhancerSettings:
         if self.vad != other.vad:
             return False
         return True
+
 
 class _UniffiFfiConverterTypeEnhancerSettings(_UniffiConverterRustBuffer):
     @staticmethod
@@ -1148,6 +1289,7 @@ class _UniffiFfiConverterTypeEnhancerSettings(_UniffiConverterRustBuffer):
         _UniffiFfiConverterTypeModelParameters.write(value.model_parameters, buf)
         _UniffiFfiConverterTypeVadSettings.write(value.vad, buf)
 
+
 class _UniffiFfiConverterUInt64(_UniffiConverterPrimitiveInt):
     CLASS_NAME = "u64"
     VALUE_MIN = 0
@@ -1161,26 +1303,27 @@ class _UniffiFfiConverterUInt64(_UniffiConverterPrimitiveInt):
     def write(value, buf):
         buf.write_u64(value)
 
+
 @dataclass
 class NativeAudioBufferMut:
     """
     A buffer owned by and whose lifetime is managed by the foreign language.
-"""
-    def __init__(self, *, ptr:int, len:int):
+    """
+
+    def __init__(self, *, ptr: int, len: int):
         self.ptr = ptr
         self.len = len
-        
-        
 
-    
     def __str__(self):
         return "NativeAudioBufferMut(ptr={}, len={})".format(self.ptr, self.len)
+
     def __eq__(self, other):
         if self.ptr != other.ptr:
             return False
         if self.len != other.len:
             return False
         return True
+
 
 class _UniffiFfiConverterTypeNativeAudioBufferMut(_UniffiConverterRustBuffer):
     @staticmethod
@@ -1200,20 +1343,33 @@ class _UniffiFfiConverterTypeNativeAudioBufferMut(_UniffiConverterRustBuffer):
         _UniffiFfiConverterUInt64.write(value.ptr, buf)
         _UniffiFfiConverterUInt64.write(value.len, buf)
 
+
 @dataclass
 class StreamInfo:
-    def __init__(self, *, room_id:str, room_name:str, participant_identity:str, participant_id:str, track_id:str):
+    def __init__(
+        self,
+        *,
+        room_id: str,
+        room_name: str,
+        participant_identity: str,
+        participant_id: str,
+        track_id: str,
+    ):
         self.room_id = room_id
         self.room_name = room_name
         self.participant_identity = participant_identity
         self.participant_id = participant_id
         self.track_id = track_id
-        
-        
 
-    
     def __str__(self):
-        return "StreamInfo(room_id={}, room_name={}, participant_identity={}, participant_id={}, track_id={})".format(self.room_id, self.room_name, self.participant_identity, self.participant_id, self.track_id)
+        return "StreamInfo(room_id={}, room_name={}, participant_identity={}, participant_id={}, track_id={})".format(
+            self.room_id,
+            self.room_name,
+            self.participant_identity,
+            self.participant_id,
+            self.track_id,
+        )
+
     def __eq__(self, other):
         if self.room_id != other.room_id:
             return False
@@ -1226,6 +1382,7 @@ class StreamInfo:
         if self.track_id != other.track_id:
             return False
         return True
+
 
 class _UniffiFfiConverterTypeStreamInfo(_UniffiConverterRustBuffer):
     @staticmethod
@@ -1255,7 +1412,6 @@ class _UniffiFfiConverterTypeStreamInfo(_UniffiConverterRustBuffer):
         _UniffiFfiConverterString.write(value.track_id, buf)
 
 
-
 # EnhancerError
 # We want to define each variant as a nested class that's also a subclass,
 # which is tricky in Python.  To accomplish this we're going to create each
@@ -1265,20 +1421,25 @@ class _UniffiFfiConverterTypeStreamInfo(_UniffiConverterRustBuffer):
 class EnhancerError(Exception):
     pass
 
+
 _UniffiTempEnhancerError = EnhancerError
 
+
 class EnhancerError:  # type: ignore
-    
     class Model(_UniffiTempEnhancerError):
         def __repr__(self):
             return "EnhancerError.Model({})".format(repr(str(self)))
-    _UniffiTempEnhancerError.Model = Model # type: ignore
+
+    _UniffiTempEnhancerError.Model = Model  # type: ignore
+
     class Authorization(_UniffiTempEnhancerError):
         def __repr__(self):
             return "EnhancerError.Authorization({})".format(repr(str(self)))
-    _UniffiTempEnhancerError.Authorization = Authorization # type: ignore
 
-EnhancerError = _UniffiTempEnhancerError # type: ignore
+    _UniffiTempEnhancerError.Authorization = Authorization  # type: ignore
+
+
+EnhancerError = _UniffiTempEnhancerError  # type: ignore
 del _UniffiTempEnhancerError
 
 
@@ -1310,6 +1471,7 @@ class _UniffiFfiConverterTypeEnhancerError(_UniffiConverterRustBuffer):
         if isinstance(value, EnhancerError.Authorization):
             buf.write_i32(2)
 
+
 class _UniffiFfiConverterSequenceTypeNativeAudioBufferMut(_UniffiConverterRustBuffer):
     @classmethod
     def check_lower(cls, value):
@@ -1332,6 +1494,7 @@ class _UniffiFfiConverterSequenceTypeNativeAudioBufferMut(_UniffiConverterRustBu
         return [
             _UniffiFfiConverterTypeNativeAudioBufferMut.read(buf) for i in range(count)
         ]
+
 
 class _UniffiFfiConverterBoolean:
     @classmethod
@@ -1358,43 +1521,49 @@ class _UniffiFfiConverterBoolean:
 class EnhancerProtocol(typing.Protocol):
     """
     Ai-coustics audio enhancer.
-"""
-    
+    """
+
     def process(self, frame: NativeAudioBufferMut) -> None:
         """
         Process an interleaved, 10ms frame.
-"""
+        """
         raise NotImplementedError
+
     def process_planar(self, channels: typing.List[NativeAudioBufferMut]) -> None:
         """
         Process a planar, 10ms frame.
-"""
+        """
         raise NotImplementedError
+
     def process_with_vad(self, frame: NativeAudioBufferMut) -> bool:
         """
         Process an interleaved, 10ms frame. Returns vad information alongside the mutated frame.
-"""
+        """
         raise NotImplementedError
+
     def update_credentials(self, credentials: Credentials) -> None:
         """
         Update credentials for model authorization.
 
         The model must always hold a set of valid credentials for continued operation.
 
-"""
+        """
         raise NotImplementedError
+
     def update_stream_info(self, info: StreamInfo) -> None:
         """
         Report information about the current audio stream being processed.
-"""
+        """
         raise NotImplementedError
+
 
 class Enhancer(EnhancerProtocol):
     """
     Ai-coustics audio enhancer.
-"""
-    
+    """
+
     _handle: ctypes.c_uint64
+
     def __init__(self, settings: EnhancerSettings):
         """
         Creates a new audio filter with the provided settings.
@@ -1402,8 +1571,8 @@ class Enhancer(EnhancerProtocol):
         If provided settings are invalid or model use cannot be authorized,
         the result is an error.
 
-"""
-        
+        """
+
         _UniffiFfiConverterTypeEnhancerSettings.check_lower(settings)
         _uniffi_lowered_args = (
             _UniffiFfiConverterTypeEnhancerSettings.lower(settings),
@@ -1421,10 +1590,14 @@ class Enhancer(EnhancerProtocol):
         # In case of partial initialization of instances.
         handle = getattr(self, "_handle", None)
         if handle is not None:
-            _uniffi_rust_call(_UniffiLib.uniffi_plugins_ai_coustics_uniffi_fn_free_enhancer, handle)
+            _uniffi_rust_call(
+                _UniffiLib.uniffi_plugins_ai_coustics_uniffi_fn_free_enhancer, handle
+            )
 
     def _uniffi_clone_handle(self):
-        return _uniffi_rust_call(_UniffiLib.uniffi_plugins_ai_coustics_uniffi_fn_clone_enhancer, self._handle)
+        return _uniffi_rust_call(
+            _UniffiLib.uniffi_plugins_ai_coustics_uniffi_fn_clone_enhancer, self._handle
+        )
 
     # Used by alternative constructors or any methods which return this type.
     @classmethod
@@ -1434,11 +1607,12 @@ class Enhancer(EnhancerProtocol):
         inst = cls.__new__(cls)
         inst._handle = handle
         return inst
+
     def process(self, frame: NativeAudioBufferMut) -> None:
         """
         Process an interleaved, 10ms frame.
-"""
-        
+        """
+
         _UniffiFfiConverterTypeNativeAudioBufferMut.check_lower(frame)
         _uniffi_lowered_args = (
             self._uniffi_clone_handle(),
@@ -1452,11 +1626,12 @@ class Enhancer(EnhancerProtocol):
             *_uniffi_lowered_args,
         )
         return _uniffi_lift_return(_uniffi_ffi_result)
+
     def process_planar(self, channels: typing.List[NativeAudioBufferMut]) -> None:
         """
         Process a planar, 10ms frame.
-"""
-        
+        """
+
         _UniffiFfiConverterSequenceTypeNativeAudioBufferMut.check_lower(channels)
         _uniffi_lowered_args = (
             self._uniffi_clone_handle(),
@@ -1470,11 +1645,12 @@ class Enhancer(EnhancerProtocol):
             *_uniffi_lowered_args,
         )
         return _uniffi_lift_return(_uniffi_ffi_result)
+
     def process_with_vad(self, frame: NativeAudioBufferMut) -> bool:
         """
         Process an interleaved, 10ms frame. Returns vad information alongside the mutated frame.
-"""
-        
+        """
+
         _UniffiFfiConverterTypeNativeAudioBufferMut.check_lower(frame)
         _uniffi_lowered_args = (
             self._uniffi_clone_handle(),
@@ -1488,14 +1664,15 @@ class Enhancer(EnhancerProtocol):
             *_uniffi_lowered_args,
         )
         return _uniffi_lift_return(_uniffi_ffi_result)
+
     def update_credentials(self, credentials: Credentials) -> None:
         """
         Update credentials for model authorization.
 
         The model must always hold a set of valid credentials for continued operation.
 
-"""
-        
+        """
+
         _UniffiFfiConverterTypeCredentials.check_lower(credentials)
         _uniffi_lowered_args = (
             self._uniffi_clone_handle(),
@@ -1509,11 +1686,12 @@ class Enhancer(EnhancerProtocol):
             *_uniffi_lowered_args,
         )
         return _uniffi_lift_return(_uniffi_ffi_result)
+
     def update_stream_info(self, info: StreamInfo) -> None:
         """
         Report information about the current audio stream being processed.
-"""
-        
+        """
+
         _UniffiFfiConverterTypeStreamInfo.check_lower(info)
         _uniffi_lowered_args = (
             self._uniffi_clone_handle(),
@@ -1529,9 +1707,6 @@ class Enhancer(EnhancerProtocol):
         return _uniffi_lift_return(_uniffi_ffi_result)
 
 
-
-
-
 class _UniffiFfiConverterTypeEnhancer:
     @staticmethod
     def lift(value: int) -> Enhancer:
@@ -1540,7 +1715,9 @@ class _UniffiFfiConverterTypeEnhancer:
     @staticmethod
     def check_lower(value: Enhancer):
         if not isinstance(value, Enhancer):
-            raise TypeError("Expected Enhancer instance, {} found".format(type(value).__name__))
+            raise TypeError(
+                "Expected Enhancer instance, {} found".format(type(value).__name__)
+            )
 
     @staticmethod
     def lower(value: Enhancer) -> ctypes.c_uint64:
@@ -1557,6 +1734,7 @@ class _UniffiFfiConverterTypeEnhancer:
     def write(cls, value: Enhancer, buf: _UniffiRustBuffer):
         buf.write_u64(cls.lower(value))
 
+
 class _UniffiFfiConverterUInt8(_UniffiConverterPrimitiveInt):
     CLASS_NAME = "u8"
     VALUE_MIN = 0
@@ -1569,6 +1747,7 @@ class _UniffiFfiConverterUInt8(_UniffiConverterPrimitiveInt):
     @staticmethod
     def write(value, buf):
         buf.write_u8(value)
+
 
 __all__ = [
     "InternalError",

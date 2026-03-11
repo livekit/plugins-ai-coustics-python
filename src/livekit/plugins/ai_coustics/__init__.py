@@ -7,7 +7,13 @@ from typing import Dict, Optional
 from livekit.agents import Plugin
 
 from .log import logger
-from .plugin import AICousticsAudioEnhancer, EnhancerModel, ModelParameters, VadSettings, FRAME_USERDATA_AIC_VAD_ATTRIBUTE
+from .plugin import (
+    AICousticsAudioEnhancer,
+    EnhancerModel,
+    ModelParameters,
+    VadSettings,
+    FRAME_USERDATA_AIC_VAD_ATTRIBUTE,
+)
 from .vad import VAD
 
 
@@ -27,9 +33,7 @@ def audio_enhancement(
     FRAME_USERDATA_AIC_VAD_ATTRIBUTE `userdata` attribute containing the output of the aic vad model.
     """
     return AICousticsAudioEnhancer(
-        model=model,
-        vad_settings=vad_settings,
-        model_parameters=model_parameters
+        model=model, vad_settings=vad_settings, model_parameters=model_parameters
     )
 
 

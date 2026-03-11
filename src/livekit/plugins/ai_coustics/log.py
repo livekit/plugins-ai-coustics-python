@@ -1,4 +1,5 @@
-import logging, time
+import logging
+import time
 
 
 class ThrottlingFilter(logging.Filter):

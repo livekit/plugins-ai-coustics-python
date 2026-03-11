@@ -14,9 +14,10 @@ from ._ffi import (
 )
 from .log import logger
 from livekit import rtc
-from typing import Dict, Optional
+from typing import Optional
 from dataclasses import dataclass
 import numpy as np
+
 
 @dataclass
 class ModelParameters:
@@ -52,6 +53,7 @@ def to_native_buffer(data: memoryview) -> tuple[np.ndarray, NativeAudioBufferMut
 
     return samples, native_buffer
 
+
 """
 Attribute used to store associated VAD data (the return value of
 https://docs.rs/aic-sdk/latest/aic_sdk/struct.Vad.html#method.is_speech_detected) from aic
@@ -59,8 +61,8 @@ model into processed `AudioFrame`s.
 """
 FRAME_USERDATA_AIC_VAD_ATTRIBUTE = "lk.aic-vad"
 
-class AICousticsAudioEnhancer(rtc.FrameProcessor[rtc.AudioFrame]):
 
+class AICousticsAudioEnhancer(rtc.FrameProcessor[rtc.AudioFrame]):
     def __init__(
         self,
         *,
@@ -134,8 +136,10 @@ class AICousticsAudioEnhancer(rtc.FrameProcessor[rtc.AudioFrame]):
                 samples_per_channel=frame.samples_per_channel,
                 credentials=self._credentials,
                 model=self._model,
-                model_parameters=self._model_parameters._to_uniffi() if self._model_parameters else ModelParametersUniffi(bypass=None, enhancement_level=None),
-                vad=self._vad_settings
+                model_parameters=self._model_parameters._to_uniffi()
+                if self._model_parameters
+                else ModelParametersUniffi(bypass=None, enhancement_level=None),
+                vad=self._vad_settings,
             )
             try:
                 self._enhancer = Enhancer(self._settings)

@@ -2,9 +2,11 @@
 
 from setuptools import setup, Distribution
 
+
 class BinaryDistribution(Distribution):
     def has_ext_modules(self):
         # Force platform-specific wheels
         return True
+
 
 setup(distclass=BinaryDistribution)
