@@ -16,7 +16,7 @@ uv add livekit-plugins-ai-coustics
 
 ## Requirements
 
-- Python >= 3.9
+- Python >= 3.10
 - livekit >= 0.21.4
 
 ## Usage
