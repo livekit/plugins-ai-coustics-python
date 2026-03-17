@@ -51,4 +51,5 @@ __all__ = [
     "EnhancerModel",
     "VadSettings",
     "VAD",
+    "ModelParameters",
 ]
