@@ -1,8 +1,9 @@
 # Copyright © 2025 LiveKit, Inc. All rights reserved.
 # Proprietary and confidential.
 
+import warnings
 from importlib.metadata import version
-from typing import Dict, Optional
+from typing import Optional
 
 from livekit.agents import Plugin
 
@@ -26,6 +27,12 @@ def audio_enhancement(
     represented as `AudioFrame`s. In addition, each frame will be annotated with a
     FRAME_USERDATA_AIC_VAD_ATTRIBUTE `userdata` attribute containing the output of the aic vad model.
     """
+    if model == EnhancerModel.SPARROW_S:
+        warnings.warn(
+            "sparrowS is deprecated, use rookS instead",
+            DeprecationWarning,
+            stacklevel=2,
+        )
     return AICousticsAudioEnhancer(
         model=model,
         vad_settings=vad_settings,

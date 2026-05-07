@@ -933,7 +933,11 @@ class EnhancerModel(enum.Enum):
     
     QUAIL_VF_L = 1
     
-    SPARROW_S = 2
+    QUAIL_VF_S = 2
+    
+    SPARROW_S = 3
+    
+    ROOK_S = 4
     
 
 
@@ -946,7 +950,11 @@ class _UniffiFfiConverterTypeEnhancerModel(_UniffiConverterRustBuffer):
         if variant == 2:
             return EnhancerModel.QUAIL_VF_L
         if variant == 3:
+            return EnhancerModel.QUAIL_VF_S
+        if variant == 4:
             return EnhancerModel.SPARROW_S
+        if variant == 5:
+            return EnhancerModel.ROOK_S
         raise InternalError("Raw enum value doesn't match any cases")
 
     @staticmethod
@@ -955,7 +963,11 @@ class _UniffiFfiConverterTypeEnhancerModel(_UniffiConverterRustBuffer):
             return
         if value == EnhancerModel.QUAIL_VF_L:
             return
+        if value == EnhancerModel.QUAIL_VF_S:
+            return
         if value == EnhancerModel.SPARROW_S:
+            return
+        if value == EnhancerModel.ROOK_S:
             return
         raise ValueError(value)
 
@@ -965,8 +977,12 @@ class _UniffiFfiConverterTypeEnhancerModel(_UniffiConverterRustBuffer):
             buf.write_i32(1)
         if value == EnhancerModel.QUAIL_VF_L:
             buf.write_i32(2)
-        if value == EnhancerModel.SPARROW_S:
+        if value == EnhancerModel.QUAIL_VF_S:
             buf.write_i32(3)
+        if value == EnhancerModel.SPARROW_S:
+            buf.write_i32(4)
+        if value == EnhancerModel.ROOK_S:
+            buf.write_i32(5)
 
 
 
