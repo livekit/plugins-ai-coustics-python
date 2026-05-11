@@ -7,6 +7,7 @@ from typing import Optional
 
 from livekit.agents import Plugin
 
+from .auth import Auth, AuthBase, AiCousticsApi
 from .log import logger
 from .plugin import AICousticsAudioEnhancer, EnhancerModel, ModelParameters, VadSettings, FRAME_USERDATA_AIC_VAD_ATTRIBUTE
 from .vad import VAD
@@ -21,6 +22,7 @@ def audio_enhancement(
         minimum_speech_duration=None,
     ),
     model_parameters: Optional[ModelParameters] = None,
+    auth: AuthBase = Auth.livekit_cloud(),
 ):
     """
     Implements a mechanism to apply [ai-coustics models](https://ai-coustics.com/) on audio data
@@ -36,7 +38,8 @@ def audio_enhancement(
     return AICousticsAudioEnhancer(
         model=model,
         vad_settings=vad_settings,
-        model_parameters=model_parameters
+        model_parameters=model_parameters,
+        auth=auth,
     )
 
 
@@ -59,4 +62,8 @@ __all__ = [
     "VadSettings",
     "VAD",
     "ModelParameters",
+    "LiveKitCloud",
+    "AiCousticsApi",
+    "Auth",
+    "AuthBase",
 ]

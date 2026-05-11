@@ -478,7 +478,7 @@ def _uniffi_check_contract_api_version(lib):
         raise InternalError("UniFFI contract version mismatch: try cleaning and rebuilding your project")
 
 def _uniffi_check_api_checksums(lib):
-    if lib.uniffi_plugins_ai_coustics_uniffi_checksum_constructor_enhancer_new() != 685:
+    if lib.uniffi_plugins_ai_coustics_uniffi_checksum_constructor_enhancer_new() != 64497:
         raise InternalError("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     if lib.uniffi_plugins_ai_coustics_uniffi_checksum_method_enhancer_process() != 9700:
         raise InternalError("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
@@ -764,6 +764,7 @@ _UniffiLib.uniffi_plugins_ai_coustics_uniffi_fn_free_enhancer.argtypes = (
 )
 _UniffiLib.uniffi_plugins_ai_coustics_uniffi_fn_free_enhancer.restype = None
 _UniffiLib.uniffi_plugins_ai_coustics_uniffi_fn_constructor_enhancer_new.argtypes = (
+    _UniffiRustBuffer,
     _UniffiRustBuffer,
     ctypes.POINTER(_UniffiRustCallStatus),
 )
@@ -1100,11 +1101,10 @@ class _UniffiFfiConverterTypeVadSettings(_UniffiConverterRustBuffer):
 
 @dataclass
 class EnhancerSettings:
-    def __init__(self, *, sample_rate:int, num_channels:int, samples_per_channel:int, credentials:Credentials, model:EnhancerModel, model_parameters:ModelParameters, vad:VadSettings):
+    def __init__(self, *, sample_rate:int, num_channels:int, samples_per_channel:int, model:EnhancerModel, model_parameters:ModelParameters, vad:VadSettings):
         self.sample_rate = sample_rate
         self.num_channels = num_channels
         self.samples_per_channel = samples_per_channel
-        self.credentials = credentials
         self.model = model
         self.model_parameters = model_parameters
         self.vad = vad
@@ -1113,15 +1113,13 @@ class EnhancerSettings:
 
     
     def __str__(self):
-        return "EnhancerSettings(sample_rate={}, num_channels={}, samples_per_channel={}, credentials={}, model={}, model_parameters={}, vad={})".format(self.sample_rate, self.num_channels, self.samples_per_channel, self.credentials, self.model, self.model_parameters, self.vad)
+        return "EnhancerSettings(sample_rate={}, num_channels={}, samples_per_channel={}, model={}, model_parameters={}, vad={})".format(self.sample_rate, self.num_channels, self.samples_per_channel, self.model, self.model_parameters, self.vad)
     def __eq__(self, other):
         if self.sample_rate != other.sample_rate:
             return False
         if self.num_channels != other.num_channels:
             return False
         if self.samples_per_channel != other.samples_per_channel:
-            return False
-        if self.credentials != other.credentials:
             return False
         if self.model != other.model:
             return False
@@ -1138,7 +1136,6 @@ class _UniffiFfiConverterTypeEnhancerSettings(_UniffiConverterRustBuffer):
             sample_rate=_UniffiFfiConverterUInt32.read(buf),
             num_channels=_UniffiFfiConverterUInt16.read(buf),
             samples_per_channel=_UniffiFfiConverterUInt32.read(buf),
-            credentials=_UniffiFfiConverterTypeCredentials.read(buf),
             model=_UniffiFfiConverterTypeEnhancerModel.read(buf),
             model_parameters=_UniffiFfiConverterTypeModelParameters.read(buf),
             vad=_UniffiFfiConverterTypeVadSettings.read(buf),
@@ -1149,7 +1146,6 @@ class _UniffiFfiConverterTypeEnhancerSettings(_UniffiConverterRustBuffer):
         _UniffiFfiConverterUInt32.check_lower(value.sample_rate)
         _UniffiFfiConverterUInt16.check_lower(value.num_channels)
         _UniffiFfiConverterUInt32.check_lower(value.samples_per_channel)
-        _UniffiFfiConverterTypeCredentials.check_lower(value.credentials)
         _UniffiFfiConverterTypeEnhancerModel.check_lower(value.model)
         _UniffiFfiConverterTypeModelParameters.check_lower(value.model_parameters)
         _UniffiFfiConverterTypeVadSettings.check_lower(value.vad)
@@ -1159,7 +1155,6 @@ class _UniffiFfiConverterTypeEnhancerSettings(_UniffiConverterRustBuffer):
         _UniffiFfiConverterUInt32.write(value.sample_rate, buf)
         _UniffiFfiConverterUInt16.write(value.num_channels, buf)
         _UniffiFfiConverterUInt32.write(value.samples_per_channel, buf)
-        _UniffiFfiConverterTypeCredentials.write(value.credentials, buf)
         _UniffiFfiConverterTypeEnhancerModel.write(value.model, buf)
         _UniffiFfiConverterTypeModelParameters.write(value.model_parameters, buf)
         _UniffiFfiConverterTypeVadSettings.write(value.vad, buf)
@@ -1269,6 +1264,135 @@ class _UniffiFfiConverterTypeStreamInfo(_UniffiConverterRustBuffer):
         _UniffiFfiConverterString.write(value.participant_identity, buf)
         _UniffiFfiConverterString.write(value.participant_id, buf)
         _UniffiFfiConverterString.write(value.track_id, buf)
+
+
+
+
+
+
+class AuthMode:
+    """
+    Selects the authentication mode for the audio enhancer.
+"""
+    def __init__(self):
+        raise RuntimeError("AuthMode cannot be instantiated directly")
+
+    # Each enum variant is a nested class of the enum itself.
+    @dataclass
+    class LIVE_KIT_CLOUD:
+        """
+        Use LiveKit Cloud for authorization and usage reporting (default).
+"""
+        
+        def __init__(self, url:str, token:str):
+            self.url = url
+            
+            
+            self.token = token
+            
+            
+            pass
+
+    
+            
+            
+    
+        def __str__(self):
+            return "AuthMode.LIVE_KIT_CLOUD(url={}, token={})".format(self.url, self.token)
+        def __eq__(self, other):
+            if not other.is_LIVE_KIT_CLOUD():
+                return False
+            if self.url != other.url:
+                return False
+            if self.token != other.token:
+                return False
+            return True
+
+    @dataclass
+    class AI_COUSTICS_API:
+        """
+        Use your own ai-coustics API credentials directly, bypassing LiveKit Cloud.
+"""
+        
+        def __init__(self, license_key:str):
+            self.license_key = license_key
+            
+            
+            pass
+
+    
+            
+            
+    
+        def __str__(self):
+            return "AuthMode.AI_COUSTICS_API(license_key={})".format(self.license_key)
+        def __eq__(self, other):
+            if not other.is_AI_COUSTICS_API():
+                return False
+            if self.license_key != other.license_key:
+                return False
+            return True
+
+    
+
+    # For each variant, we have `is_NAME` and `is_name` methods for easily checking
+    # whether an instance is that variant.
+    def is_LIVE_KIT_CLOUD(self) -> bool:
+        return isinstance(self, AuthMode.LIVE_KIT_CLOUD)
+    def is_live_kit_cloud(self) -> bool:
+        return isinstance(self, AuthMode.LIVE_KIT_CLOUD)
+    def is_AI_COUSTICS_API(self) -> bool:
+        return isinstance(self, AuthMode.AI_COUSTICS_API)
+    def is_ai_coustics_api(self) -> bool:
+        return isinstance(self, AuthMode.AI_COUSTICS_API)
+    
+
+# Now, a little trick - we make each nested variant class be a subclass of the main
+# enum class, so that method calls and instance checks etc will work intuitively.
+# We might be able to do this a little more neatly with a metaclass, but this'll do.
+AuthMode.LIVE_KIT_CLOUD = type("AuthMode.LIVE_KIT_CLOUD", (AuthMode.LIVE_KIT_CLOUD, AuthMode,), {})  # type: ignore
+AuthMode.AI_COUSTICS_API = type("AuthMode.AI_COUSTICS_API", (AuthMode.AI_COUSTICS_API, AuthMode,), {})  # type: ignore
+
+
+
+
+class _UniffiFfiConverterTypeAuthMode(_UniffiConverterRustBuffer):
+    @staticmethod
+    def read(buf):
+        variant = buf.read_i32()
+        if variant == 1:
+            return AuthMode.LIVE_KIT_CLOUD(
+                _UniffiFfiConverterString.read(buf),
+                _UniffiFfiConverterString.read(buf),
+            )
+        if variant == 2:
+            return AuthMode.AI_COUSTICS_API(
+                _UniffiFfiConverterString.read(buf),
+            )
+        raise InternalError("Raw enum value doesn't match any cases")
+
+    @staticmethod
+    def check_lower(value):
+        if value.is_LIVE_KIT_CLOUD():
+            _UniffiFfiConverterString.check_lower(value.url)
+            _UniffiFfiConverterString.check_lower(value.token)
+            return
+        if value.is_AI_COUSTICS_API():
+            _UniffiFfiConverterString.check_lower(value.license_key)
+            return
+        raise ValueError(value)
+
+    @staticmethod
+    def write(value, buf):
+        if value.is_LIVE_KIT_CLOUD():
+            buf.write_i32(1)
+            _UniffiFfiConverterString.write(value.url, buf)
+            _UniffiFfiConverterString.write(value.token, buf)
+        if value.is_AI_COUSTICS_API():
+            buf.write_i32(2)
+            _UniffiFfiConverterString.write(value.license_key, buf)
+
+
 
 
 
@@ -1411,7 +1535,7 @@ class Enhancer(EnhancerProtocol):
 """
     
     _handle: ctypes.c_uint64
-    def __init__(self, settings: EnhancerSettings):
+    def __init__(self, auth: AuthMode,settings: EnhancerSettings):
         """
         Creates a new audio filter with the provided settings.
 
@@ -1420,8 +1544,11 @@ class Enhancer(EnhancerProtocol):
 
 """
         
+        _UniffiFfiConverterTypeAuthMode.check_lower(auth)
+        
         _UniffiFfiConverterTypeEnhancerSettings.check_lower(settings)
         _uniffi_lowered_args = (
+            _UniffiFfiConverterTypeAuthMode.lower(auth),
             _UniffiFfiConverterTypeEnhancerSettings.lower(settings),
         )
         _uniffi_lift_return = _UniffiFfiConverterTypeEnhancer.lift
@@ -1589,6 +1716,7 @@ class _UniffiFfiConverterUInt8(_UniffiConverterPrimitiveInt):
 __all__ = [
     "InternalError",
     "EnhancerModel",
+    "AuthMode",
     "EnhancerError",
     "Credentials",
     "ModelParameters",

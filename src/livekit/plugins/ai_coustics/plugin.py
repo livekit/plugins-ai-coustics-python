@@ -12,9 +12,10 @@ from ._ffi import (
     NativeAudioBufferMut,
     VadSettings,
 )
+from .auth import Auth, AuthBase, LiveKitCloud
 from .log import logger
 from livekit import rtc
-from typing import Dict, Optional
+from typing import Optional
 from dataclasses import dataclass
 import numpy as np
 
@@ -67,10 +68,13 @@ class AICousticsAudioEnhancer(rtc.FrameProcessor[rtc.AudioFrame]):
         model: EnhancerModel,
         vad_settings: VadSettings,
         model_parameters: Optional[ModelParameters] = None,
+        auth: Optional[AuthBase] = None,
     ) -> None:
         self._model = model
         self._vad_settings = vad_settings
         self._model_parameters = model_parameters
+        self._auth = auth or Auth.livekit_cloud()
+        self._last_error_msg: Optional[str] = None
 
         self._enhancer: Enhancer | None = None
         self._info: StreamInfo | None = None
@@ -114,8 +118,17 @@ class AICousticsAudioEnhancer(rtc.FrameProcessor[rtc.AudioFrame]):
         if not self.enabled:
             return frame
 
-        if self._credentials is None or self._info is None:
-            logger.error("Missing configuration")
+        auth_mode = self._auth._to_auth_mode(self._credentials)
+        if auth_mode is None:
+            self._log_process_frame_error("Missing auth mode")
+            return frame
+
+        if self._auth_mode_requires_credentials() and not self._credentials:
+            self._log_process_frame_error("Missing credentials")
+            return frame
+
+        if self._auth_mode_requires_stream_info() and self._info is None:
+            self._log_process_frame_error("Missing stream info")
             return frame
 
         ## lazily create enhancer
@@ -132,18 +145,19 @@ class AICousticsAudioEnhancer(rtc.FrameProcessor[rtc.AudioFrame]):
                 sample_rate=frame.sample_rate,
                 num_channels=frame.num_channels,
                 samples_per_channel=frame.samples_per_channel,
-                credentials=self._credentials,
                 model=self._model,
                 model_parameters=self._model_parameters._to_uniffi() if self._model_parameters else ModelParametersUniffi(bypass=None, enhancement_level=None),
                 vad=self._vad_settings
             )
             try:
-                self._enhancer = Enhancer(self._settings)
+                self._enhancer = Enhancer(auth_mode, self._settings)
             except EnhancerError as e:
-                logger.error("Init failed: %s", e)
+                self._log_process_frame_error(f"Failed to initialize plugin core: {e} - Disabling noise cancellation for all following audio frames.")
                 self._enhancer = None
+                self._enabled = False
                 return frame
-            self._enhancer.update_stream_info(self._info)
+            if self._info is not None:
+                self._enhancer.update_stream_info(self._info)
 
         # Convert frame.data to NativeAudioBufferMut (f32)
         # Keep samples alive during the process call
@@ -153,7 +167,7 @@ class AICousticsAudioEnhancer(rtc.FrameProcessor[rtc.AudioFrame]):
         try:
             vad_data = self._enhancer.process_with_vad(native_buffer)
         except EnhancerError as e:
-            logger.error("Processing failed: %s", e)
+            self._log_process_frame_error(f"Processing failed: {e}")
             return frame
 
         # Convert back to int16 and create new frame
@@ -168,6 +182,30 @@ class AICousticsAudioEnhancer(rtc.FrameProcessor[rtc.AudioFrame]):
         )
         output_frame.userdata[FRAME_USERDATA_AIC_VAD_ATTRIBUTE] = vad_data
         return output_frame
+
+    def _auth_mode_requires_stream_info(self) -> bool:
+        """Does the given auth mode require update_stream_info be called?"""
+        return isinstance(self._auth, LiveKitCloud)
+
+    def _auth_mode_requires_credentials(self) -> bool:
+        """
+        Does the given auth mode require update_credentials be called?
+
+        Note that this is just here to provide helpful warnings to users,
+        the actual auth layer is in the rust core.
+        """
+        return isinstance(self._auth, LiveKitCloud)
+
+    def _log_process_frame_error(self, msg: str):
+        """
+        Logs a new error to the screen when processing a frame.
+        Only shows logs which were newly introduced as compared with the
+        last processed frame.
+        """
+        if self._last_error_msg == msg:
+            return
+        self._last_error_msg = msg
+        logger.error(msg)
 
     def _close(self):
         if self._enhancer is not None:
