@@ -11,6 +11,7 @@ from ._ffi import (
     Credentials,
     NativeAudioBufferMut,
     VadSettings,
+    model_parameters_equal,
 )
 from .auth import Auth, AuthBase, LiveKitCloud
 from .log import logger
@@ -89,6 +90,30 @@ class AICousticsAudioEnhancer(rtc.FrameProcessor[rtc.AudioFrame]):
     @enabled.setter
     def enabled(self, value: bool) -> None:
         self._enabled = value
+
+    def update_model_parameters(self, model_parameters: ModelParameters):
+        """
+        Updates the model parameters on the running model.
+
+        The native core must already exist (i.e. at least one audio frame must
+        have been processed) for the update to take effect; otherwise the call
+        is a no-op and a warning is logged. The new parameters are also stored
+        so they are reapplied if the native core is later recreated (e.g. on a
+        sample-rate or channel change).
+        """
+        if not self._enhancer:
+            logger.warning("update_model_parameters: Native core not yet initialized, skipping. Process at least one audio frame first.")
+            return
+        new_uniffi = model_parameters._to_uniffi()
+        current_uniffi = (
+            self._model_parameters._to_uniffi()
+            if self._model_parameters is not None
+            else ModelParametersUniffi(bypass=None, enhancement_level=None)
+        )
+        if model_parameters_equal(new_uniffi, current_uniffi):
+            return
+        self._model_parameters = model_parameters
+        self._enhancer.update_model_parameters(new_uniffi)
 
     def _on_stream_info_updated(
         self, *, room_name: str, participant_identity: str, publication_sid: str
