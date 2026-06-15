@@ -478,21 +478,27 @@ def _uniffi_check_contract_api_version(lib):
         raise InternalError("UniFFI contract version mismatch: try cleaning and rebuilding your project")
 
 def _uniffi_check_api_checksums(lib):
-    if lib.uniffi_plugins_ai_coustics_uniffi_checksum_func_model_parameters_equal() != 8734:
+    if lib.uniffi_plugins_ai_coustics_uniffi_checksum_func_model_parameters_equal() != 17121:
         raise InternalError("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
-    if lib.uniffi_plugins_ai_coustics_uniffi_checksum_constructor_enhancer_new() != 64497:
+    if lib.uniffi_plugins_ai_coustics_uniffi_checksum_constructor_enhancer_new() != 14395:
         raise InternalError("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
-    if lib.uniffi_plugins_ai_coustics_uniffi_checksum_method_enhancer_process() != 9700:
+    if lib.uniffi_plugins_ai_coustics_uniffi_checksum_method_enhancer_process() != 49709:
         raise InternalError("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
-    if lib.uniffi_plugins_ai_coustics_uniffi_checksum_method_enhancer_process_planar() != 34627:
+    if lib.uniffi_plugins_ai_coustics_uniffi_checksum_method_enhancer_process_owned() != 12753:
         raise InternalError("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
-    if lib.uniffi_plugins_ai_coustics_uniffi_checksum_method_enhancer_process_with_vad() != 36609:
+    if lib.uniffi_plugins_ai_coustics_uniffi_checksum_method_enhancer_process_owned_planar() != 54753:
         raise InternalError("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
-    if lib.uniffi_plugins_ai_coustics_uniffi_checksum_method_enhancer_update_credentials() != 20156:
+    if lib.uniffi_plugins_ai_coustics_uniffi_checksum_method_enhancer_process_owned_with_vad() != 23938:
         raise InternalError("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
-    if lib.uniffi_plugins_ai_coustics_uniffi_checksum_method_enhancer_update_model_parameters() != 12347:
+    if lib.uniffi_plugins_ai_coustics_uniffi_checksum_method_enhancer_process_planar() != 60430:
         raise InternalError("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
-    if lib.uniffi_plugins_ai_coustics_uniffi_checksum_method_enhancer_update_stream_info() != 15469:
+    if lib.uniffi_plugins_ai_coustics_uniffi_checksum_method_enhancer_process_with_vad() != 14884:
+        raise InternalError("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
+    if lib.uniffi_plugins_ai_coustics_uniffi_checksum_method_enhancer_update_credentials() != 9264:
+        raise InternalError("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
+    if lib.uniffi_plugins_ai_coustics_uniffi_checksum_method_enhancer_update_model_parameters() != 7171:
+        raise InternalError("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
+    if lib.uniffi_plugins_ai_coustics_uniffi_checksum_method_enhancer_update_stream_info() != 59795:
         raise InternalError("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
 
 # A ctypes library to expose the extern-C FFI definitions.
@@ -785,6 +791,24 @@ _UniffiLib.uniffi_plugins_ai_coustics_uniffi_fn_method_enhancer_process.argtypes
     ctypes.POINTER(_UniffiRustCallStatus),
 )
 _UniffiLib.uniffi_plugins_ai_coustics_uniffi_fn_method_enhancer_process.restype = None
+_UniffiLib.uniffi_plugins_ai_coustics_uniffi_fn_method_enhancer_process_owned.argtypes = (
+    ctypes.c_uint64,
+    _UniffiRustBuffer,
+    ctypes.POINTER(_UniffiRustCallStatus),
+)
+_UniffiLib.uniffi_plugins_ai_coustics_uniffi_fn_method_enhancer_process_owned.restype = _UniffiRustBuffer
+_UniffiLib.uniffi_plugins_ai_coustics_uniffi_fn_method_enhancer_process_owned_planar.argtypes = (
+    ctypes.c_uint64,
+    _UniffiRustBuffer,
+    ctypes.POINTER(_UniffiRustCallStatus),
+)
+_UniffiLib.uniffi_plugins_ai_coustics_uniffi_fn_method_enhancer_process_owned_planar.restype = _UniffiRustBuffer
+_UniffiLib.uniffi_plugins_ai_coustics_uniffi_fn_method_enhancer_process_owned_with_vad.argtypes = (
+    ctypes.c_uint64,
+    _UniffiRustBuffer,
+    ctypes.POINTER(_UniffiRustCallStatus),
+)
+_UniffiLib.uniffi_plugins_ai_coustics_uniffi_fn_method_enhancer_process_owned_with_vad.restype = _UniffiRustBuffer
 _UniffiLib.uniffi_plugins_ai_coustics_uniffi_fn_method_enhancer_process_planar.argtypes = (
     ctypes.c_uint64,
     _UniffiRustBuffer,
@@ -827,6 +851,15 @@ _UniffiLib.uniffi_plugins_ai_coustics_uniffi_checksum_constructor_enhancer_new.r
 _UniffiLib.uniffi_plugins_ai_coustics_uniffi_checksum_method_enhancer_process.argtypes = (
 )
 _UniffiLib.uniffi_plugins_ai_coustics_uniffi_checksum_method_enhancer_process.restype = ctypes.c_uint16
+_UniffiLib.uniffi_plugins_ai_coustics_uniffi_checksum_method_enhancer_process_owned.argtypes = (
+)
+_UniffiLib.uniffi_plugins_ai_coustics_uniffi_checksum_method_enhancer_process_owned.restype = ctypes.c_uint16
+_UniffiLib.uniffi_plugins_ai_coustics_uniffi_checksum_method_enhancer_process_owned_planar.argtypes = (
+)
+_UniffiLib.uniffi_plugins_ai_coustics_uniffi_checksum_method_enhancer_process_owned_planar.restype = ctypes.c_uint16
+_UniffiLib.uniffi_plugins_ai_coustics_uniffi_checksum_method_enhancer_process_owned_with_vad.argtypes = (
+)
+_UniffiLib.uniffi_plugins_ai_coustics_uniffi_checksum_method_enhancer_process_owned_with_vad.restype = ctypes.c_uint16
 _UniffiLib.uniffi_plugins_ai_coustics_uniffi_checksum_method_enhancer_process_planar.argtypes = (
 )
 _UniffiLib.uniffi_plugins_ai_coustics_uniffi_checksum_method_enhancer_process_planar.restype = ctypes.c_uint16
@@ -1233,6 +1266,89 @@ class _UniffiFfiConverterTypeNativeAudioBufferMut(_UniffiConverterRustBuffer):
         _UniffiFfiConverterUInt64.write(value.ptr, buf)
         _UniffiFfiConverterUInt64.write(value.len, buf)
 
+class _UniffiFfiConverterSequenceFloat32(_UniffiConverterRustBuffer):
+    @classmethod
+    def check_lower(cls, value):
+        for item in value:
+            _UniffiFfiConverterFloat32.check_lower(item)
+
+    @classmethod
+    def write(cls, value, buf):
+        items = len(value)
+        buf.write_i32(items)
+        for item in value:
+            _UniffiFfiConverterFloat32.write(item, buf)
+
+    @classmethod
+    def read(cls, buf):
+        count = buf.read_i32()
+        if count < 0:
+            raise InternalError("Unexpected negative sequence length")
+
+        return [
+            _UniffiFfiConverterFloat32.read(buf) for i in range(count)
+        ]
+
+class _UniffiFfiConverterBoolean:
+    @classmethod
+    def check_lower(cls, value):
+        return not not value
+
+    @classmethod
+    def lower(cls, value):
+        return 1 if value else 0
+
+    @staticmethod
+    def lift(value):
+        return value != 0
+
+    @classmethod
+    def read(cls, buf):
+        return cls.lift(buf.read_u8())
+
+    @classmethod
+    def write(cls, value, buf):
+        buf.write_u8(value)
+
+@dataclass
+class ProcessVadResult:
+    """
+    Result of [`Enhancer::process_owned_with_vad`]: the mutated frame plus the VAD speech-detected flag.
+"""
+    def __init__(self, *, frame:typing.List[float], vad:bool):
+        self.frame = frame
+        self.vad = vad
+        
+        
+
+    
+    def __str__(self):
+        return "ProcessVadResult(frame={}, vad={})".format(self.frame, self.vad)
+    def __eq__(self, other):
+        if self.frame != other.frame:
+            return False
+        if self.vad != other.vad:
+            return False
+        return True
+
+class _UniffiFfiConverterTypeProcessVadResult(_UniffiConverterRustBuffer):
+    @staticmethod
+    def read(buf):
+        return ProcessVadResult(
+            frame=_UniffiFfiConverterSequenceFloat32.read(buf),
+            vad=_UniffiFfiConverterBoolean.read(buf),
+        )
+
+    @staticmethod
+    def check_lower(value):
+        _UniffiFfiConverterSequenceFloat32.check_lower(value.frame)
+        _UniffiFfiConverterBoolean.check_lower(value.vad)
+
+    @staticmethod
+    def write(value, buf):
+        _UniffiFfiConverterSequenceFloat32.write(value.frame, buf)
+        _UniffiFfiConverterBoolean.write(value.vad, buf)
+
 @dataclass
 class StreamInfo:
     def __init__(self, *, room_id:str, room_name:str, participant_identity:str, participant_id:str, track_id:str):
@@ -1322,6 +1438,8 @@ class AuthMode:
         def __str__(self):
             return "AuthMode.LIVE_KIT_CLOUD(url={}, token={})".format(self.url, self.token)
         def __eq__(self, other):
+            if not isinstance(other, AuthMode):
+                return NotImplemented
             if not other.is_LIVE_KIT_CLOUD():
                 return False
             if self.url != other.url:
@@ -1349,6 +1467,8 @@ class AuthMode:
         def __str__(self):
             return "AuthMode.AI_COUSTICS_API(license_key={})".format(self.license_key)
         def __eq__(self, other):
+            if not isinstance(other, AuthMode):
+                return NotImplemented
             if not other.is_AI_COUSTICS_API():
                 return False
             if self.license_key != other.license_key:
@@ -1472,6 +1592,29 @@ class _UniffiFfiConverterTypeEnhancerError(_UniffiConverterRustBuffer):
         if isinstance(value, EnhancerError.Authorization):
             buf.write_i32(2)
 
+class _UniffiFfiConverterSequenceSequenceFloat32(_UniffiConverterRustBuffer):
+    @classmethod
+    def check_lower(cls, value):
+        for item in value:
+            _UniffiFfiConverterSequenceFloat32.check_lower(item)
+
+    @classmethod
+    def write(cls, value, buf):
+        items = len(value)
+        buf.write_i32(items)
+        for item in value:
+            _UniffiFfiConverterSequenceFloat32.write(item, buf)
+
+    @classmethod
+    def read(cls, buf):
+        count = buf.read_i32()
+        if count < 0:
+            raise InternalError("Unexpected negative sequence length")
+
+        return [
+            _UniffiFfiConverterSequenceFloat32.read(buf) for i in range(count)
+        ]
+
 class _UniffiFfiConverterSequenceTypeNativeAudioBufferMut(_UniffiConverterRustBuffer):
     @classmethod
     def check_lower(cls, value):
@@ -1495,27 +1638,6 @@ class _UniffiFfiConverterSequenceTypeNativeAudioBufferMut(_UniffiConverterRustBu
             _UniffiFfiConverterTypeNativeAudioBufferMut.read(buf) for i in range(count)
         ]
 
-class _UniffiFfiConverterBoolean:
-    @classmethod
-    def check_lower(cls, value):
-        return not not value
-
-    @classmethod
-    def lower(cls, value):
-        return 1 if value else 0
-
-    @staticmethod
-    def lift(value):
-        return value != 0
-
-    @classmethod
-    def read(cls, buf):
-        return cls.lift(buf.read_u8())
-
-    @classmethod
-    def write(cls, value, buf):
-        buf.write_u8(value)
-
 
 class EnhancerProtocol(typing.Protocol):
     """
@@ -1527,14 +1649,31 @@ class EnhancerProtocol(typing.Protocol):
         Process an interleaved, 10ms frame.
 """
         raise NotImplementedError
+    def process_owned(self, frame: typing.List[float]) -> typing.List[float]:
+        """
+        Process an interleaved, 10ms frame. Heap-copy: takes and returns owned samples.
+        Use under bindgens (e.g. ubrn) that don't expose a JS/Python primitive for
+        extracting a TypedArray's underlying pointer; otherwise prefer [`Self::process`].
+"""
+        raise NotImplementedError
+    def process_owned_planar(self, channels: typing.List[typing.List[float]]) -> typing.List[typing.List[float]]:
+        """
+        Process a planar, 10ms frame. Heap-copy; see [`Self::process_owned`].
+"""
+        raise NotImplementedError
+    def process_owned_with_vad(self, frame: typing.List[float]) -> ProcessVadResult:
+        """
+        Process an interleaved, 10ms frame. Heap-copy + VAD flag; see [`Self::process_owned`].
+"""
+        raise NotImplementedError
     def process_planar(self, channels: typing.List[NativeAudioBufferMut]) -> None:
         """
-        Process a planar, 10ms frame.
+        Process a planar, 10ms frame. Zero-copy; see [`Self::process`].
 """
         raise NotImplementedError
     def process_with_vad(self, frame: NativeAudioBufferMut) -> bool:
         """
-        Process an interleaved, 10ms frame. Returns vad information alongside the mutated frame.
+        Process an interleaved, 10ms frame. Zero-copy + VAD flag; see [`Self::process`].
 """
         raise NotImplementedError
     def update_credentials(self, credentials: Credentials) -> None:
@@ -1569,7 +1708,7 @@ class Enhancer(EnhancerProtocol):
 """
         
         _UniffiFfiConverterTypeAuthMode.check_lower(auth)
-        
+
         _UniffiFfiConverterTypeEnhancerSettings.check_lower(settings)
         _uniffi_lowered_args = (
             _UniffiFfiConverterTypeAuthMode.lower(auth),
@@ -1619,9 +1758,65 @@ class Enhancer(EnhancerProtocol):
             *_uniffi_lowered_args,
         )
         return _uniffi_lift_return(_uniffi_ffi_result)
+    def process_owned(self, frame: typing.List[float]) -> typing.List[float]:
+        """
+        Process an interleaved, 10ms frame. Heap-copy: takes and returns owned samples.
+        Use under bindgens (e.g. ubrn) that don't expose a JS/Python primitive for
+        extracting a TypedArray's underlying pointer; otherwise prefer [`Self::process`].
+"""
+        
+        _UniffiFfiConverterSequenceFloat32.check_lower(frame)
+        _uniffi_lowered_args = (
+            self._uniffi_clone_handle(),
+            _UniffiFfiConverterSequenceFloat32.lower(frame),
+        )
+        _uniffi_lift_return = _UniffiFfiConverterSequenceFloat32.lift
+        _uniffi_error_converter = _UniffiFfiConverterTypeEnhancerError
+        _uniffi_ffi_result = _uniffi_rust_call_with_error(
+            _uniffi_error_converter,
+            _UniffiLib.uniffi_plugins_ai_coustics_uniffi_fn_method_enhancer_process_owned,
+            *_uniffi_lowered_args,
+        )
+        return _uniffi_lift_return(_uniffi_ffi_result)
+    def process_owned_planar(self, channels: typing.List[typing.List[float]]) -> typing.List[typing.List[float]]:
+        """
+        Process a planar, 10ms frame. Heap-copy; see [`Self::process_owned`].
+"""
+        
+        _UniffiFfiConverterSequenceSequenceFloat32.check_lower(channels)
+        _uniffi_lowered_args = (
+            self._uniffi_clone_handle(),
+            _UniffiFfiConverterSequenceSequenceFloat32.lower(channels),
+        )
+        _uniffi_lift_return = _UniffiFfiConverterSequenceSequenceFloat32.lift
+        _uniffi_error_converter = _UniffiFfiConverterTypeEnhancerError
+        _uniffi_ffi_result = _uniffi_rust_call_with_error(
+            _uniffi_error_converter,
+            _UniffiLib.uniffi_plugins_ai_coustics_uniffi_fn_method_enhancer_process_owned_planar,
+            *_uniffi_lowered_args,
+        )
+        return _uniffi_lift_return(_uniffi_ffi_result)
+    def process_owned_with_vad(self, frame: typing.List[float]) -> ProcessVadResult:
+        """
+        Process an interleaved, 10ms frame. Heap-copy + VAD flag; see [`Self::process_owned`].
+"""
+        
+        _UniffiFfiConverterSequenceFloat32.check_lower(frame)
+        _uniffi_lowered_args = (
+            self._uniffi_clone_handle(),
+            _UniffiFfiConverterSequenceFloat32.lower(frame),
+        )
+        _uniffi_lift_return = _UniffiFfiConverterTypeProcessVadResult.lift
+        _uniffi_error_converter = _UniffiFfiConverterTypeEnhancerError
+        _uniffi_ffi_result = _uniffi_rust_call_with_error(
+            _uniffi_error_converter,
+            _UniffiLib.uniffi_plugins_ai_coustics_uniffi_fn_method_enhancer_process_owned_with_vad,
+            *_uniffi_lowered_args,
+        )
+        return _uniffi_lift_return(_uniffi_ffi_result)
     def process_planar(self, channels: typing.List[NativeAudioBufferMut]) -> None:
         """
-        Process a planar, 10ms frame.
+        Process a planar, 10ms frame. Zero-copy; see [`Self::process`].
 """
         
         _UniffiFfiConverterSequenceTypeNativeAudioBufferMut.check_lower(channels)
@@ -1639,7 +1834,7 @@ class Enhancer(EnhancerProtocol):
         return _uniffi_lift_return(_uniffi_ffi_result)
     def process_with_vad(self, frame: NativeAudioBufferMut) -> bool:
         """
-        Process an interleaved, 10ms frame. Returns vad information alongside the mutated frame.
+        Process an interleaved, 10ms frame. Zero-copy + VAD flag; see [`Self::process`].
 """
         
         _UniffiFfiConverterTypeNativeAudioBufferMut.check_lower(frame)
@@ -1754,7 +1949,7 @@ class _UniffiFfiConverterUInt8(_UniffiConverterPrimitiveInt):
 def model_parameters_equal(a: ModelParameters,b: ModelParameters) -> bool:
     
     _UniffiFfiConverterTypeModelParameters.check_lower(a)
-    
+
     _UniffiFfiConverterTypeModelParameters.check_lower(b)
     _uniffi_lowered_args = (
         _UniffiFfiConverterTypeModelParameters.lower(a),
@@ -1779,6 +1974,7 @@ __all__ = [
     "VadSettings",
     "EnhancerSettings",
     "NativeAudioBufferMut",
+    "ProcessVadResult",
     "StreamInfo",
     "model_parameters_equal",
     "Enhancer",
