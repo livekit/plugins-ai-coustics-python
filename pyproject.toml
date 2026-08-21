@@ -6,7 +6,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "livekit-plugins-ai-coustics"
-version = "0.3.0"
+version = "0.3.1"
 description = "LiveKit AI Coustics noise filtering plugin"
 readme = "README.md"
 requires-python = ">=3.10"
