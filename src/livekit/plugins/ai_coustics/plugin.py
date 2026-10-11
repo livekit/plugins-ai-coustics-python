@@ -56,7 +56,7 @@ def to_native_buffer(data: memoryview) -> tuple[np.ndarray, NativeAudioBufferMut
 
 """
 Attribute used to store associated VAD data (the return value of
-https://docs.rs/aic-sdk/latest/aic_sdk/struct.Vad.html#method.is_speech_detected) from aic
+https://docs.rs/aic-sdk/latest/aic_sdk/struct.EnergyVadContext.html#method.is_speech_detected) from aic
 model into processed `AudioFrame`s.
 """
 FRAME_USERDATA_AIC_VAD_ATTRIBUTE = "lk.aic-vad"
