@@ -480,6 +480,8 @@ def _uniffi_check_contract_api_version(lib):
 def _uniffi_check_api_checksums(lib):
     if lib.uniffi_plugins_ai_coustics_uniffi_checksum_func_model_parameters_equal() != 17121:
         raise InternalError("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
+    if lib.uniffi_plugins_ai_coustics_uniffi_checksum_func_on_process_exit() != 56607:
+        raise InternalError("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     if lib.uniffi_plugins_ai_coustics_uniffi_checksum_constructor_enhancer_new() != 14395:
         raise InternalError("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     if lib.uniffi_plugins_ai_coustics_uniffi_checksum_method_enhancer_process() != 49709:
@@ -775,6 +777,11 @@ _UniffiLib.uniffi_plugins_ai_coustics_uniffi_fn_func_model_parameters_equal.argt
     ctypes.POINTER(_UniffiRustCallStatus),
 )
 _UniffiLib.uniffi_plugins_ai_coustics_uniffi_fn_func_model_parameters_equal.restype = ctypes.c_int8
+_UniffiLib.uniffi_plugins_ai_coustics_uniffi_fn_func_on_process_exit.argtypes = (
+    ctypes.c_uint64,
+    ctypes.POINTER(_UniffiRustCallStatus),
+)
+_UniffiLib.uniffi_plugins_ai_coustics_uniffi_fn_func_on_process_exit.restype = ctypes.c_int8
 _UniffiLib.uniffi_plugins_ai_coustics_uniffi_fn_constructor_enhancer_new.argtypes = (
     _UniffiRustBuffer,
     _UniffiRustBuffer,
@@ -829,6 +836,9 @@ _UniffiLib.ffi_plugins_ai_coustics_uniffi_uniffi_contract_version.restype = ctyp
 _UniffiLib.uniffi_plugins_ai_coustics_uniffi_checksum_func_model_parameters_equal.argtypes = (
 )
 _UniffiLib.uniffi_plugins_ai_coustics_uniffi_checksum_func_model_parameters_equal.restype = ctypes.c_uint16
+_UniffiLib.uniffi_plugins_ai_coustics_uniffi_checksum_func_on_process_exit.argtypes = (
+)
+_UniffiLib.uniffi_plugins_ai_coustics_uniffi_checksum_func_on_process_exit.restype = ctypes.c_uint16
 _UniffiLib.uniffi_plugins_ai_coustics_uniffi_checksum_constructor_enhancer_new.argtypes = (
 )
 _UniffiLib.uniffi_plugins_ai_coustics_uniffi_checksum_constructor_enhancer_new.restype = ctypes.c_uint16
@@ -1849,6 +1859,24 @@ def model_parameters_equal(a: ModelParameters,b: ModelParameters) -> bool:
         *_uniffi_lowered_args,
     )
     return _uniffi_lift_return(_uniffi_ffi_result)
+def on_process_exit(timeout_ms: int) -> bool:
+    """
+    Call when the process is about to exit, after the last enhancer is destroyed; calling it more
+    than once is fine. Blocks for up to `timeout_ms` and returns whether it finished in time.
+"""
+    
+    _UniffiFfiConverterUInt64.check_lower(timeout_ms)
+    _uniffi_lowered_args = (
+        _UniffiFfiConverterUInt64.lower(timeout_ms),
+    )
+    _uniffi_lift_return = _UniffiFfiConverterBoolean.lift
+    _uniffi_error_converter = None
+    _uniffi_ffi_result = _uniffi_rust_call_with_error(
+        _uniffi_error_converter,
+        _UniffiLib.uniffi_plugins_ai_coustics_uniffi_fn_func_on_process_exit,
+        *_uniffi_lowered_args,
+    )
+    return _uniffi_lift_return(_uniffi_ffi_result)
 
 __all__ = [
     "InternalError",
@@ -1863,6 +1891,7 @@ __all__ = [
     "ProcessVadResult",
     "StreamInfo",
     "model_parameters_equal",
+    "on_process_exit",
     "Enhancer",
     "EnhancerProtocol",
 ]

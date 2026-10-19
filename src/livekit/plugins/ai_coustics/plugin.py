@@ -12,13 +12,51 @@ from ._ffi import (
     NativeAudioBufferMut,
     VadSettings,
     model_parameters_equal,
+    on_process_exit,
 )
 from .auth import Auth, AuthBase, LiveKitCloud
 from .log import logger
 from livekit import rtc
+from livekit.agents import JobExecutorType, get_job_context
 from typing import Optional
 from dataclasses import dataclass
+import asyncio
+import atexit
 import numpy as np
+
+"""
+The longest on_process_exit may hold up the exit of the process. Kept well inside livekit-agents'
+default shutdown_process_timeout of 10s.
+"""
+_PROCESS_EXIT_TIMEOUT_MS = 5000
+
+_job_shutdown_hook_registered = False
+
+
+def _handle_process_exit_on_job_shutdown() -> None:
+    """
+    With the livekit-agents process executor, the job's process exits right after the job, and on
+    Linux it exits without running atexit handlers, so the exit is handled at job shutdown instead.
+    Other executors share the process between jobs, so they are left to atexit.
+    """
+    global _job_shutdown_hook_registered
+    if _job_shutdown_hook_registered:
+        return
+    try:
+        ctx = get_job_context()
+    except RuntimeError:
+        return
+    if ctx.proc.executor_type != JobExecutorType.PROCESS:
+        return
+    _job_shutdown_hook_registered = True
+
+    async def _on_job_shutdown() -> None:
+        await asyncio.to_thread(on_process_exit, _PROCESS_EXIT_TIMEOUT_MS)
+
+    ctx.add_shutdown_callback(_on_job_shutdown)
+
+
+atexit.register(on_process_exit, _PROCESS_EXIT_TIMEOUT_MS)
 
 @dataclass
 class ModelParameters:
@@ -82,6 +120,8 @@ class AICousticsAudioEnhancer(rtc.FrameProcessor[rtc.AudioFrame]):
         self._credentials: Credentials | None = None
         self._settings: EnhancerSettings | None = None
         self._enabled = True
+
+        _handle_process_exit_on_job_shutdown()
 
     @property
     def enabled(self) -> bool:
@@ -183,6 +223,7 @@ class AICousticsAudioEnhancer(rtc.FrameProcessor[rtc.AudioFrame]):
                 return frame
             if self._info is not None:
                 self._enhancer.update_stream_info(self._info)
+            _handle_process_exit_on_job_shutdown()
 
         # Convert frame.data to NativeAudioBufferMut (f32)
         # Keep samples alive during the process call
